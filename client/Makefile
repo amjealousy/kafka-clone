@@ -1,5 +1,8 @@
-
+file = $1
 
 
 send:
 	@printf "\x00\x00\x00\x29\x00\x00\x00\x2a\x00\x00\x00\x01\x00\x00\x00\x0atest-topic\x00\x00\x00\x06my-key\x00\x00\x00\x05hello" | nc localhost 5090 | hexdump -C
+
+proto:
+	@protoc --go_out=. --go_opt=paths=source_relative {$file}

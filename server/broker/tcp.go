@@ -1,4 +1,4 @@
-package main
+package broker
 
 import (
 	"bufio"
@@ -8,12 +8,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"kafka-clone/server/broker"
 	"kafka-clone/server/datatypes"
 	"log/slog"
 	"net"
 	"runtime/debug"
 	"sync"
+
+	"google.golang.org/protobuf/proto"
 )
 
 type TCPServer struct {
@@ -22,7 +23,8 @@ type TCPServer struct {
 	headerPool  sync.Pool
 	reqbodyPool sync.Pool
 	logger      *slog.Logger
-	Kbroker     *broker.Broker
+	Kbroker     *Broker
+	MainHandler func(*TCPContext, []byte)
 }
 type PooledBuffer struct {
 	Body   []byte
@@ -40,8 +42,8 @@ func NewTCPServer(log *slog.Logger) *TCPServer {
 	t.reqbodyPool = sync.Pool{
 		New: func() any {
 			return &PooledBuffer{
-				Body:  make([]byte, maxBodySize),
-				Reply: make([]byte, maxBodySize),
+				Body:  make([]byte, MaxBodySize),
+				Reply: make([]byte, MaxBodySize),
 			}
 		},
 	}
@@ -60,7 +62,7 @@ func CreateListener(server *TCPServer, addr, port string) net.Listener {
 
 	return l
 }
-func (t *TCPServer) SetBroker(b *broker.Broker) {
+func (t *TCPServer) SetBroker(b *Broker) {
 	t.Kbroker = b
 }
 
@@ -85,7 +87,7 @@ func (t *TCPServer) ReadLoop(ctx context.Context, l net.Listener) error {
 	}
 }
 
-const maxBodySize = 64 * 1024
+const MaxBodySize = 64 * 1024
 
 func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 	defer func() {
@@ -104,7 +106,7 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 
 	// 2. Нам гарантированно нужно 12 байт для заголовка (4 на size + 4 на correlation_id+CMD)
 	buf := t.reqbodyPool.Get().(*PooledBuffer)
-	defer t.reqbodyPool.Put(buf) // Обязательно возвращаем обратно
+
 	// io.ReadFull блокирует поток до тех пор, пока не прочитает ровно 12 байт (или не случится ошибка)
 	// Это защищает от проблемы "частичного чтения" по TCP
 	_, err := io.ReadFull(connReader, buf.Header[:])
@@ -127,7 +129,7 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 	if header.MessageSize > 4 {
 		bodySize := header.MessageSize - 8
 		if bodySize > 0 {
-			if bodySize > maxBodySize {
+			if bodySize > MaxBodySize {
 				return errors.New("error: размер тела превышает максимально допустимый")
 			}
 
@@ -137,39 +139,81 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 				return errors.New(err.Error())
 			}
 
-			// В этой точке bodyBuf содержит чистые данные тела, и мы не потратили ни одной аллокации
-			//fmt.Printf("Успешно прочитали тело без аллокаций: %s\n", bodyBuf)
-
-			er, writtenB := t.Kbroker.HandleCommand(header.CommandType, bodyBuf, buf.Reply[8:])
-			if er != nil {
-				return errors.New("Got handler err " + er.Error())
+			// В этой точке bodyBuf содержит чистые данные тела
+			flush := func() {
+				t.reqbodyPool.Put(buf)
 			}
-
-			_, err = conn.Write(t.ProtocolResponse(buf, writtenB, header.CorrelationID))
+			tcpContext := NewTCPContext(conn, buf, header, flush)
+			t.MainHandler(tcpContext, bodyBuf)
 
 		}
 	}
 
 	return err
 }
-func (t *TCPServer) ProtocolResponse(buf *PooledBuffer, written int, corrId uint32) []byte {
-	bodyLen := written
 
+type TCPContext struct {
+	con       net.Conn
+	Header    datatypes.KafkaHeader
+	buf       *PooledBuffer
+	flushFunc func()
+}
+
+func NewTCPContext(con net.Conn, buf *PooledBuffer, header datatypes.KafkaHeader, flushF func()) *TCPContext {
+	return &TCPContext{
+		con:       con,
+		buf:       buf,
+		Header:    header,
+		flushFunc: flushF,
+	}
+
+}
+func (ctx *TCPContext) Close() {
+	ctx.con.Close()
+	if cap(ctx.buf.Reply) > MaxBodySize || cap(ctx.buf.Body) > MaxBodySize {
+		return
+	}
+	ctx.flushFunc()
+}
+
+func (ctx *TCPContext) Write(b []byte) error {
+	_, err := ctx.con.Write(ctx.ProtocolClosure(len(b)))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (ctx *TCPContext) Encode(str proto.Message) ([]byte, error) {
+	options := proto.MarshalOptions{}
+	out, err := options.MarshalAppend(ctx.buf.Reply[:0], str)
+	return out, err
+}
+func (ctx *TCPContext) Decode(b []byte, message proto.Message) error {
+
+	err := proto.Unmarshal(b, message)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ctx *TCPContext) ProtocolClosure(written int) []byte {
+	bodyLen := written
 	// 2. Вычисляем общий размер сообщения
 	// 4 байта (Correlation ID) + длина нашего тела
 	totalMessageSize := uint32(4 + bodyLen)
 
-	// 3. Собираем ответ в нашем пулированном буфере (0 аллокаций)
+	// 3. Собираем ответ в нашем пулированном буфере
 	// Записываем размер ответа (первые 4 байта)
-	binary.BigEndian.PutUint32(buf.Reply[0:4], totalMessageSize)
+	binary.BigEndian.PutUint32(ctx.buf.Reply[0:4], totalMessageSize)
 
 	// Записываем Correlation ID (следующие 4 байта).
 	// По правилам Kafka он должен совпадать с тем, что прислал клиент,
 	// но если у вас по заданию жестко 7, пишем 7.
-	binary.BigEndian.PutUint32(buf.Reply[4:8], corrId)
+	binary.BigEndian.PutUint32(ctx.buf.Reply[4:8], ctx.Header.CorrelationID)
 
 	// 5. Вычисляем итоговую длину всего пакета (8 байт заголовка + длина тела)
 	finalPacketSize := 8 + bodyLen
 
-	return buf.Reply[:finalPacketSize]
+	return ctx.buf.Reply[:finalPacketSize]
 }

@@ -1,5 +1,7 @@
 package datatypes
 
+import "log/slog"
+
 type KafkaHeader struct {
 	MessageSize   uint32
 	CorrelationID uint32
@@ -22,4 +24,14 @@ type KafkaMessage[T Payload] struct {
 type Payload interface {
 	Encode() []byte
 	Decode([]byte) error
+}
+
+func DecodeKafkaBody[T Payload](payload []byte, dest T) error {
+
+	if err := dest.Decode(payload); err != nil {
+		slog.Error(err.Error())
+		return err
+	}
+
+	return nil
 }

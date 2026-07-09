@@ -38,6 +38,7 @@ func NewMongoClient(ctx context.Context, uri, dbName, collName string) (*MongoCl
 		collection: coll,
 	}, nil
 }
+
 func MockNewMongoClient() (*MongoClient, error) {
 
 	return &MongoClient{
@@ -69,6 +70,7 @@ func (m *MongoClient) FetchAllTopics(ctx context.Context) ([]topic.Topic, error)
 func (m *MongoClient) Close(ctx context.Context) error {
 	return m.client.Disconnect(ctx)
 }
+
 func (m *MongoClient) UpdateTopic(ctx context.Context, topic topic.Topic) error {
 	filter := bson.M{"id": topic.Id} // Ищем по ID топика
 

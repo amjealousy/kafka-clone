@@ -74,17 +74,16 @@ func (p *TopicProcessor) PushQueue(m []byte) uint64 {
 	p.log.Info("Added to topic", "topic", p.messages, "length", len(p.messages))
 	return offset
 }
-func (p *TopicProcessor) ReadFrom(startOffset uint64, maxMessages int) ([]topic.Message, error) {
+func (p *TopicProcessor) readFrom(startOffset uint64, maxMessages int) (error, []topic.Message) {
 	p.mx.RLock()
 	defer p.mx.RUnlock()
-
 	// Если консьюмер просит оффсет, который мы уже удалили
 	if startOffset < p.baseOffset {
-		return nil, errors.New("requested offset was already deleted (out of range)")
+		return errors.New("requested offset was already deleted (out of range)"), nil
 	}
 
 	if startOffset >= p.nextOffset {
-		return nil, nil // Новых сообщений пока нет
+		return errors.New("no message for startoffset"), nil // Новых сообщений пока нет
 	}
 
 	sliceStartIdx := startOffset - p.baseOffset
@@ -97,8 +96,19 @@ func (p *TopicProcessor) ReadFrom(startOffset uint64, maxMessages int) ([]topic.
 	result := make([]topic.Message, endIdx-int(sliceStartIdx))
 	copy(result, p.messages[sliceStartIdx:endIdx])
 
-	return result, nil
+	return nil, result
 }
+func (p *TopicProcessor) GetLastOffset() uint64 {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+	return p.nextOffset - 1
+}
+func (p *TopicProcessor) GetStartOffset() uint64 {
+	p.mx.RLock()
+	defer p.mx.RUnlock()
+	return p.baseOffset
+}
+
 func (p *TopicProcessor) CleanOldMessages(ttl time.Duration) {
 	p.mx.Lock()
 	defer p.mx.Unlock()
@@ -199,5 +209,26 @@ func (pool *ProcessorPool) SendMessage(topic string, message []byte) error {
 	} else {
 		processor.PushQueue(message)
 		return nil
+	}
+}
+func (pool *ProcessorPool) ReadMessages(topic string, start, till uint64, flags ...bool) (error, []topic.Message) {
+
+	if processor, err := pool.GetTopicProcessor(topic); err != nil {
+		return err, nil
+	} else {
+		if flags != nil {
+			for id, flag := range flags {
+				if id == 0 && flag {
+					start = processor.GetStartOffset()
+				}
+				if id == 1 && flag {
+					till = processor.GetLastOffset()
+				}
+
+			}
+
+		}
+		return processor.readFrom(start, int(till-start))
+
 	}
 }

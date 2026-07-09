@@ -40,8 +40,12 @@ func main() {
 	//}
 
 	// запуск сервера
-	tcp := NewTCPServer(logger)
-	listener := CreateListener(tcp, "127.0.0.1", "5090")
+	tcp := broker.NewTCPServer(logger)
+	listener := broker.CreateListener(tcp, "127.0.0.1", "5090")
+	kafkaHandler := func(ctx *broker.TCPContext, body []byte) {
+		myBroker.HandleCommand(ctx, body)
+	}
+	tcp.MainHandler = kafkaHandler
 	tcp.SetBroker(myBroker)
 	go tcp.ReadLoop(initCtx, listener)
 

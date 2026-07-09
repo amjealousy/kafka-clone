@@ -1,12 +1,13 @@
 package main
 
 import (
+	"kafka-clone/server/broker"
 	"net"
 	"testing"
 )
 
 func BenchmarkHandleConnection(b *testing.B) {
-	server := NewTCPServer()
+	server := broker.NewTCPServer()
 
 	requestData := append([]byte{0, 0, 0, 9, 0, 0, 0, 42}, []byte("Hello")...)
 

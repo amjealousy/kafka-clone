@@ -5,6 +5,7 @@ go 1.25
 require (
 	github.com/spf13/cobra v1.10.2
 	go.mongodb.org/mongo-driver v1.17.9
+	google.golang.org/protobuf v1.36.11
 )
 
 require (

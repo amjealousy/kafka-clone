@@ -36,7 +36,7 @@ func New(id int, dbClient *persistent.MongoClient, logger *slog.Logger) *Broker 
 		Retention:   time.Hour,
 		StartOffset: 0,
 	}
-	pool.AddTopic(t)
+	pool.AddTopic(t) // todo add handling err when add topic going to be non in-memory
 	return &Broker{
 		id: id,
 		config: &TopicsConfig{
@@ -105,29 +105,32 @@ func (b *Broker) Shutdown(ctx context.Context) error {
 	b.log.Info("graceful shutdown successfully completed")
 	return nil
 }
-func (b *Broker) HandleCommand(cmd datatypes.Command, body []byte, respBuff []byte) (error, int) {
-	b.log.Info("handling command", "command", cmd)
-	switch cmd {
+func (b *Broker) HandleCommand(ctx *TCPContext, body []byte) error {
+	b.log.Info("handling command", "command", ctx.Header.CommandType)
+	switch ctx.Header.CommandType {
 	case datatypes.Topic:
 		b.topicHander(body)
-		i := copy(respBuff, "Topic handler not allowed")
-		return nil, i
+		_ = copy(ctx.buf.Reply, "Topic handler not allowed")
+		return nil
 	case datatypes.Produce:
 		payload := &datatypes.ProducePayload{}
 		if err := datatypes.DecodeKafkaBody(body, payload); err != nil {
-			return err, 0
+			return err
 		} else {
-			b.log.Info("Kafka body", slog.Any("payload", payload))
-			handlerErr, wlen := b.producerHandler(payload, respBuff)
-			return handlerErr, wlen
-
+			b.log.Debug("Kafka body", slog.Any("payload", payload))
+			return b.producerHandler(ctx, payload)
 		}
 	case datatypes.Consume:
-		b.consumerHandler(body)
-		i := copy(respBuff, "Consume handler not allowed")
-		return nil, i
+		payload := &datatypes.ConsumePayload{}
+		if err := datatypes.DecodeKafkaBody(body, payload); err != nil {
+			return err
+		} else {
+			b.log.Debug("Kafka body", slog.Any("payload", payload))
+			return b.consumerHandler(ctx, payload)
+
+		}
 	default:
-		return errors.New("unknown command"), 0
+		return errors.New("unknown command")
 	}
 }
 
@@ -159,18 +162,82 @@ func (b *Broker) topicHander(body []byte) {
 
 }
 
-func (b *Broker) producerHandler(body *datatypes.ProducePayload, resp []byte) (error, int) {
-	if body.TopicName() == "" {
-		return errors.New("topic name is empty"), 0
+func (b *Broker) producerHandler(tctx *TCPContext, body *datatypes.ProducePayload) error {
+	if body.TopicName == "" {
+		b.log.Error("topic name is empty")
+		s := "topic name is empty"
+		response := datatypes.ProduceResponse{Status: datatypes.KafkaStatus_Error,
+			StatusMessage: &s}
+		encode, err2 := tctx.Encode(&response)
+		if err2 != nil {
+			return err2
+		}
+		err := tctx.Write(encode)
+		if err != nil {
+			b.log.Error("failed to write to topic", "topic", tctx.Header.CommandType, "error", err)
+			return err
+		}
+		return nil
 
 	}
-	if err := b.pool.SendMessage(body.TopicName(), body.Msg()); err != nil {
-		return err, copy(resp, "Not Ok")
+	if err := b.pool.SendMessage(body.TopicName, body.Msg); err != nil {
+		return err
 	}
-	return nil, copy(resp, "Ok")
+	response := datatypes.ProduceResponse{Status: datatypes.KafkaStatus_Accepted,
+		StatusMessage: nil}
+	encode, err2 := tctx.Encode(&response)
+	if err2 != nil {
+		return err2
+	}
+	err := tctx.Write(encode)
+	return err
 
 }
+func extractFlags(body *datatypes.ConsumePayload) []bool {
+	var flags []bool
+	if body.StartFlag != nil {
+		flags = append(flags, *body.StartFlag)
+	}
+	if body.EndFlag != nil {
+		if body.StartFlag == nil {
+			// Если startFlag не было, но endFlag есть,
+			// нужно сохранить позицию (зависит от вашей бизнес-логики)
+			flags = append(flags, false)
+		}
+		flags = append(flags, *body.EndFlag)
+	}
+	return flags
+}
 
-func (b *Broker) consumerHandler(body []byte) {
+func (b *Broker) consumerHandler(tctx *TCPContext, body *datatypes.ConsumePayload) error {
+	if body.TopicName == "" {
+		return errors.New("topic name is empty")
+	}
 
+	err, arrMsg := b.pool.ReadMessages(body.TopicName, body.StartOffset, body.FinOffset, extractFlags(body)...)
+	if err != nil {
+		return err
+	}
+	responseList := &datatypes.ConsumeResponseList{
+		Responses: make([]*datatypes.ConsumeResponse, 0, len(arrMsg)),
+	}
+	for _, msg := range arrMsg {
+		unpackedMsg := &datatypes.ConsumeResponse{
+			Timestamp: msg.Timestamp,
+			Offset:    msg.Offset,
+			Msg:       msg.Payload,
+		}
+		responseList.Responses = append(responseList.Responses, unpackedMsg)
+	}
+	encode, err := tctx.Encode(responseList)
+	if err != nil {
+		b.log.Error("Failed to marshal via Append", "error", err)
+		return err
+	}
+	err = tctx.Write(encode)
+	if err != nil {
+		b.log.Error("Failed to write via Append", "error", err)
+		return err
+	}
+	return nil
 }
