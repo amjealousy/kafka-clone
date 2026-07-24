@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"kafka-clone/server/broker"
-	"kafka-clone/server/persistent"
+	"kafka-clone/server/internal"
+	"kafka-clone/server/persistent/db"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -21,14 +23,14 @@ func main() {
 
 	// 1. Подключаемся к базе
 	//dbClient, err := persistent.NewMongoClient(initCtx, "mongodb://localhost:27017", "kafka_clone", "topics")
-	dbClient, err := persistent.MockNewMongoClient()
+	dbClient, err := db.MockNewMongoClient()
 	if err != nil {
 		logger.Error("database connection failed", "error", err)
 		os.Exit(1)
 	}
 
 	// 2. Создаем и инициализируем брокер
-	myBroker := broker.New(1, dbClient, logger)
+	myBroker := broker.NewBroker(1, dbClient, logger)
 	//if err := myBroker.InitConfig(initCtx); err != nil {
 	//	logger.Error("failed to init config", "error", err)
 	//	os.Exit(1)
@@ -43,6 +45,7 @@ func main() {
 	tcp := broker.NewTCPServer(logger)
 	listener := broker.CreateListener(tcp, "127.0.0.1", "5090")
 	kafkaHandler := func(ctx *broker.TCPContext, body []byte) {
+
 		myBroker.HandleCommand(ctx, body)
 	}
 	tcp.MainHandler = kafkaHandler

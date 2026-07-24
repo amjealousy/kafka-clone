@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v3.21.12
-// source: consume.proto
+// source: kafka-clone/server/datatypes/consume.proto
 
 package datatypes
 
@@ -22,19 +22,26 @@ const (
 )
 
 type ConsumePayload struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TopicName     string                 `protobuf:"bytes,1,opt,name=topic_name,json=topicName,proto3" json:"topic_name,omitempty"`
-	StartOffset   uint64                 `protobuf:"varint,2,opt,name=start_offset,json=startOffset,proto3" json:"start_offset,omitempty"`
-	FinOffset     uint64                 `protobuf:"varint,3,opt,name=fin_offset,json=finOffset,proto3" json:"fin_offset,omitempty"`
-	StartFlag     *bool                  `protobuf:"varint,4,opt,name=startFlag,proto3,oneof" json:"startFlag,omitempty"`
-	EndFlag       *bool                  `protobuf:"varint,5,opt,name=endFlag,proto3,oneof" json:"endFlag,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	TopicName   string                 `protobuf:"bytes,1,opt,name=topic_name,json=topicName,proto3" json:"topic_name,omitempty"`
+	PartitionID int64                  `protobuf:"varint,2,opt,name=partitionID,proto3" json:"partitionID,omitempty"`
+	// Types that are valid to be assigned to StartPosition:
+	//
+	//	*ConsumePayload_StartOffset
+	//	*ConsumePayload_FromBeginning
+	StartPosition isConsumePayload_StartPosition `protobuf_oneof:"start_position"`
+	// Types that are valid to be assigned to FinPosition:
+	//
+	//	*ConsumePayload_FinOffset
+	//	*ConsumePayload_TillEnd
+	FinPosition   isConsumePayload_FinPosition `protobuf_oneof:"fin_position"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ConsumePayload) Reset() {
 	*x = ConsumePayload{}
-	mi := &file_consume_proto_msgTypes[0]
+	mi := &file_kafka_clone_server_datatypes_consume_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -46,7 +53,7 @@ func (x *ConsumePayload) String() string {
 func (*ConsumePayload) ProtoMessage() {}
 
 func (x *ConsumePayload) ProtoReflect() protoreflect.Message {
-	mi := &file_consume_proto_msgTypes[0]
+	mi := &file_kafka_clone_server_datatypes_consume_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -59,7 +66,7 @@ func (x *ConsumePayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConsumePayload.ProtoReflect.Descriptor instead.
 func (*ConsumePayload) Descriptor() ([]byte, []int) {
-	return file_consume_proto_rawDescGZIP(), []int{0}
+	return file_kafka_clone_server_datatypes_consume_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ConsumePayload) GetTopicName() string {
@@ -69,33 +76,94 @@ func (x *ConsumePayload) GetTopicName() string {
 	return ""
 }
 
-func (x *ConsumePayload) GetStartOffset() uint64 {
+func (x *ConsumePayload) GetPartitionID() int64 {
 	if x != nil {
-		return x.StartOffset
+		return x.PartitionID
 	}
 	return 0
+}
+
+func (x *ConsumePayload) GetStartPosition() isConsumePayload_StartPosition {
+	if x != nil {
+		return x.StartPosition
+	}
+	return nil
+}
+
+func (x *ConsumePayload) GetStartOffset() uint64 {
+	if x != nil {
+		if x, ok := x.StartPosition.(*ConsumePayload_StartOffset); ok {
+			return x.StartOffset
+		}
+	}
+	return 0
+}
+
+func (x *ConsumePayload) GetFromBeginning() bool {
+	if x != nil {
+		if x, ok := x.StartPosition.(*ConsumePayload_FromBeginning); ok {
+			return x.FromBeginning
+		}
+	}
+	return false
+}
+
+func (x *ConsumePayload) GetFinPosition() isConsumePayload_FinPosition {
+	if x != nil {
+		return x.FinPosition
+	}
+	return nil
 }
 
 func (x *ConsumePayload) GetFinOffset() uint64 {
 	if x != nil {
-		return x.FinOffset
+		if x, ok := x.FinPosition.(*ConsumePayload_FinOffset); ok {
+			return x.FinOffset
+		}
 	}
 	return 0
 }
 
-func (x *ConsumePayload) GetStartFlag() bool {
-	if x != nil && x.StartFlag != nil {
-		return *x.StartFlag
+func (x *ConsumePayload) GetTillEnd() bool {
+	if x != nil {
+		if x, ok := x.FinPosition.(*ConsumePayload_TillEnd); ok {
+			return x.TillEnd
+		}
 	}
 	return false
 }
 
-func (x *ConsumePayload) GetEndFlag() bool {
-	if x != nil && x.EndFlag != nil {
-		return *x.EndFlag
-	}
-	return false
+type isConsumePayload_StartPosition interface {
+	isConsumePayload_StartPosition()
 }
+
+type ConsumePayload_StartOffset struct {
+	StartOffset uint64 `protobuf:"varint,3,opt,name=start_offset,json=startOffset,proto3,oneof"`
+}
+
+type ConsumePayload_FromBeginning struct {
+	FromBeginning bool `protobuf:"varint,5,opt,name=from_beginning,json=fromBeginning,proto3,oneof"` // если true, то читаем с начала
+}
+
+func (*ConsumePayload_StartOffset) isConsumePayload_StartPosition() {}
+
+func (*ConsumePayload_FromBeginning) isConsumePayload_StartPosition() {}
+
+type isConsumePayload_FinPosition interface {
+	isConsumePayload_FinPosition()
+}
+
+type ConsumePayload_FinOffset struct {
+	FinOffset uint64 `protobuf:"varint,4,opt,name=fin_offset,json=finOffset,proto3,oneof"`
+}
+
+type ConsumePayload_TillEnd struct {
+	TillEnd bool `protobuf:"varint,6,opt,name=till_end,json=tillEnd,proto3,oneof"` // если true, то читаем до конца и продолжаем стримить
+}
+
+func (*ConsumePayload_FinOffset) isConsumePayload_FinPosition() {}
+
+func (*ConsumePayload_TillEnd) isConsumePayload_FinPosition() {}
 
 type ConsumeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -108,7 +176,7 @@ type ConsumeResponse struct {
 
 func (x *ConsumeResponse) Reset() {
 	*x = ConsumeResponse{}
-	mi := &file_consume_proto_msgTypes[1]
+	mi := &file_kafka_clone_server_datatypes_consume_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -120,7 +188,7 @@ func (x *ConsumeResponse) String() string {
 func (*ConsumeResponse) ProtoMessage() {}
 
 func (x *ConsumeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_consume_proto_msgTypes[1]
+	mi := &file_kafka_clone_server_datatypes_consume_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -133,7 +201,7 @@ func (x *ConsumeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConsumeResponse.ProtoReflect.Descriptor instead.
 func (*ConsumeResponse) Descriptor() ([]byte, []int) {
-	return file_consume_proto_rawDescGZIP(), []int{1}
+	return file_kafka_clone_server_datatypes_consume_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ConsumeResponse) GetTimestamp() int64 {
@@ -166,7 +234,7 @@ type ConsumeResponseList struct {
 
 func (x *ConsumeResponseList) Reset() {
 	*x = ConsumeResponseList{}
-	mi := &file_consume_proto_msgTypes[2]
+	mi := &file_kafka_clone_server_datatypes_consume_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -178,7 +246,7 @@ func (x *ConsumeResponseList) String() string {
 func (*ConsumeResponseList) ProtoMessage() {}
 
 func (x *ConsumeResponseList) ProtoReflect() protoreflect.Message {
-	mi := &file_consume_proto_msgTypes[2]
+	mi := &file_kafka_clone_server_datatypes_consume_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -191,7 +259,7 @@ func (x *ConsumeResponseList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConsumeResponseList.ProtoReflect.Descriptor instead.
 func (*ConsumeResponseList) Descriptor() ([]byte, []int) {
-	return file_consume_proto_rawDescGZIP(), []int{2}
+	return file_kafka_clone_server_datatypes_consume_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ConsumeResponseList) GetResponses() []*ConsumeResponse {
@@ -201,23 +269,22 @@ func (x *ConsumeResponseList) GetResponses() []*ConsumeResponse {
 	return nil
 }
 
-var File_consume_proto protoreflect.FileDescriptor
+var File_kafka_clone_server_datatypes_consume_proto protoreflect.FileDescriptor
 
-const file_consume_proto_rawDesc = "" +
+const file_kafka_clone_server_datatypes_consume_proto_rawDesc = "" +
 	"\n" +
-	"\rconsume.proto\x12\tdatatypes\"\xcd\x01\n" +
+	"*kafka-clone/server/datatypes/consume.proto\x12\tdatatypes\"\xff\x01\n" +
 	"\x0eConsumePayload\x12\x1d\n" +
 	"\n" +
-	"topic_name\x18\x01 \x01(\tR\ttopicName\x12!\n" +
-	"\fstart_offset\x18\x02 \x01(\x04R\vstartOffset\x12\x1d\n" +
+	"topic_name\x18\x01 \x01(\tR\ttopicName\x12 \n" +
+	"\vpartitionID\x18\x02 \x01(\x03R\vpartitionID\x12#\n" +
+	"\fstart_offset\x18\x03 \x01(\x04H\x00R\vstartOffset\x12'\n" +
+	"\x0efrom_beginning\x18\x05 \x01(\bH\x00R\rfromBeginning\x12\x1f\n" +
 	"\n" +
-	"fin_offset\x18\x03 \x01(\x04R\tfinOffset\x12!\n" +
-	"\tstartFlag\x18\x04 \x01(\bH\x00R\tstartFlag\x88\x01\x01\x12\x1d\n" +
-	"\aendFlag\x18\x05 \x01(\bH\x01R\aendFlag\x88\x01\x01B\f\n" +
-	"\n" +
-	"_startFlagB\n" +
-	"\n" +
-	"\b_endFlag\"Y\n" +
+	"fin_offset\x18\x04 \x01(\x04H\x01R\tfinOffset\x12\x1b\n" +
+	"\btill_end\x18\x06 \x01(\bH\x01R\atillEndB\x10\n" +
+	"\x0estart_positionB\x0e\n" +
+	"\ffin_position\"Y\n" +
 	"\x0fConsumeResponse\x12\x1c\n" +
 	"\ttimestamp\x18\x01 \x01(\x03R\ttimestamp\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x04R\x06offset\x12\x10\n" +
@@ -226,24 +293,24 @@ const file_consume_proto_rawDesc = "" +
 	"\tresponses\x18\x01 \x03(\v2\x1a.datatypes.ConsumeResponseR\tresponsesB\x1eZ\x1ckafka-clone/server/datatypesb\x06proto3"
 
 var (
-	file_consume_proto_rawDescOnce sync.Once
-	file_consume_proto_rawDescData []byte
+	file_kafka_clone_server_datatypes_consume_proto_rawDescOnce sync.Once
+	file_kafka_clone_server_datatypes_consume_proto_rawDescData []byte
 )
 
-func file_consume_proto_rawDescGZIP() []byte {
-	file_consume_proto_rawDescOnce.Do(func() {
-		file_consume_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_consume_proto_rawDesc), len(file_consume_proto_rawDesc)))
+func file_kafka_clone_server_datatypes_consume_proto_rawDescGZIP() []byte {
+	file_kafka_clone_server_datatypes_consume_proto_rawDescOnce.Do(func() {
+		file_kafka_clone_server_datatypes_consume_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_kafka_clone_server_datatypes_consume_proto_rawDesc), len(file_kafka_clone_server_datatypes_consume_proto_rawDesc)))
 	})
-	return file_consume_proto_rawDescData
+	return file_kafka_clone_server_datatypes_consume_proto_rawDescData
 }
 
-var file_consume_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
-var file_consume_proto_goTypes = []any{
+var file_kafka_clone_server_datatypes_consume_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_kafka_clone_server_datatypes_consume_proto_goTypes = []any{
 	(*ConsumePayload)(nil),      // 0: datatypes.ConsumePayload
 	(*ConsumeResponse)(nil),     // 1: datatypes.ConsumeResponse
 	(*ConsumeResponseList)(nil), // 2: datatypes.ConsumeResponseList
 }
-var file_consume_proto_depIdxs = []int32{
+var file_kafka_clone_server_datatypes_consume_proto_depIdxs = []int32{
 	1, // 0: datatypes.ConsumeResponseList.responses:type_name -> datatypes.ConsumeResponse
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
@@ -252,27 +319,32 @@ var file_consume_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_consume_proto_init() }
-func file_consume_proto_init() {
-	if File_consume_proto != nil {
+func init() { file_kafka_clone_server_datatypes_consume_proto_init() }
+func file_kafka_clone_server_datatypes_consume_proto_init() {
+	if File_kafka_clone_server_datatypes_consume_proto != nil {
 		return
 	}
-	file_consume_proto_msgTypes[0].OneofWrappers = []any{}
+	file_kafka_clone_server_datatypes_consume_proto_msgTypes[0].OneofWrappers = []any{
+		(*ConsumePayload_StartOffset)(nil),
+		(*ConsumePayload_FromBeginning)(nil),
+		(*ConsumePayload_FinOffset)(nil),
+		(*ConsumePayload_TillEnd)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_consume_proto_rawDesc), len(file_consume_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_kafka_clone_server_datatypes_consume_proto_rawDesc), len(file_kafka_clone_server_datatypes_consume_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_consume_proto_goTypes,
-		DependencyIndexes: file_consume_proto_depIdxs,
-		MessageInfos:      file_consume_proto_msgTypes,
+		GoTypes:           file_kafka_clone_server_datatypes_consume_proto_goTypes,
+		DependencyIndexes: file_kafka_clone_server_datatypes_consume_proto_depIdxs,
+		MessageInfos:      file_kafka_clone_server_datatypes_consume_proto_msgTypes,
 	}.Build()
-	File_consume_proto = out.File
-	file_consume_proto_goTypes = nil
-	file_consume_proto_depIdxs = nil
+	File_kafka_clone_server_datatypes_consume_proto = out.File
+	file_kafka_clone_server_datatypes_consume_proto_goTypes = nil
+	file_kafka_clone_server_datatypes_consume_proto_depIdxs = nil
 }

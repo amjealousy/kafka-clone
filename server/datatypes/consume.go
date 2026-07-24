@@ -13,7 +13,6 @@ func (c *ConsumePayload) Encode() []byte {
 	return data
 }
 
-// Ручной Decode тоже упраздняем в пользу официальной библиотеки
 func (c *ConsumePayload) Decode(payload []byte) error {
 	return proto.Unmarshal(payload, c)
 }

@@ -83,6 +83,7 @@ func (t *TCPServer) ReadLoop(ctx context.Context, l net.Listener) error {
 			t.logger.Info("[INFO] new tcp connection from ", "ip", accept.RemoteAddr())
 
 			t.handleConnection(accept)
+			
 		}()
 	}
 }
