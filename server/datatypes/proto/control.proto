@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package datatypes;
+
+option go_package = "kafka-clone/server/datatypes/proto-generated";
+
+// ControlService — административный control-plane API кластера. Слушает на
+// ОТДЕЛЬНОМ порту, независимом от ReplicationService (репликация лога) и от
+// TCP-порта produce/consume клиентов.
+service ControlService {
+  // DescribeTopic можно вызвать на ЛЮБОЙ ноде кластера — ответ строится из
+  // локально видимого состояния etcd, поэтому не требует обращения именно к
+  // текущему контроллеру. Возвращает адрес лидера каждой партиции (туда можно
+  // писать) и список реплик с их in_sync статусом (читать можно только с тех,
+  // где in_sync == true).
+  rpc DescribeTopic(DescribeTopicRequest) returns (DescribeTopicResponse);
+
+  // CreateTopic обрабатывается ТОЛЬКО текущим контроллером кластера (тем, кто
+  // выиграл выборы лидера в /kafka/controller/state). Если запрос попал на
+  // другую ноду — она вернёт not_controller=true и адрес актуального
+  // контроллера, на который клиенту следует повторить запрос.
+  rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse);
+}
+
+message DescribeTopicRequest {
+  string topic_name = 1;
+}
+
+message ReplicaInfo {
+  int64 node_id = 1;
+  string address = 2; // TCP-адрес ноды (host:port) для produce/consume клиентов
+  bool in_sync = 3;   // true — реплика полностью восстановила лог, читать можно
+}
+
+message PartitionInfo {
+  int64 partition_id = 1;
+  int64 leader_node_id = 2;
+  string leader_address = 3;         // TCP-адрес лидера — сюда слать produce
+  repeated ReplicaInfo replicas = 4; // все назначенные реплики + их in_sync статус
+}
+
+message DescribeTopicResponse {
+  bool found = 1;
+  string error = 2;
+  string topic_name = 3;
+  repeated PartitionInfo partitions = 4;
+}
+
+message CreateTopicRequest {
+  string topic_name = 1;
+  int32 num_partitions = 2;
+  int32 replication_factor = 3;
+}
+
+message CreateTopicResponse {
+  bool success = 1;
+  string error = 2;
+  bool not_controller = 3;       // true — эта нода не контроллер
+  string controller_address = 4; // куда повторить запрос, если not_controller
+}

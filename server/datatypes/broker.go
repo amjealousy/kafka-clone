@@ -1,9 +1,13 @@
 package datatypes
 
-import "context"
+import (
+	"context"
+	gen "kafka-clone/server/datatypes/proto-generated"
+)
 
 type IBroker interface {
-	ReplicationLogHandler(ctx context.Context, req *AppendEntriesRequest) (*AppendEntriesResponse, error)
+	ReplicationLogHandler(ctx context.Context, req *gen.AppendEntriesRequest) (*gen.AppendEntriesResponse, error)
+	FetchLogHandler(ctx context.Context, req *gen.FetchLogRequest) (*gen.FetchLogResponse, error)
 }
 type ClusterRole string
 

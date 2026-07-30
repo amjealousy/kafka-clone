@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kafka-clone/server/datatypes"
+
+	gen "kafka-clone/server/datatypes/proto-generated"
 	"kafka-clone/server/internal"
 	"kafka-clone/server/topic"
 	"log/slog"
@@ -50,6 +51,51 @@ func (tp *TopicProcessor) GetPartition(id int) (error, *PartitionProcessor) {
 		return nil, processor
 	}
 }
+func (tp *TopicProcessor) DeletePartition(partID int, forceDelete bool) error {
+	tp.mx.Lock()
+
+	p, ok := tp.partitions[partID]
+	if !ok {
+		tp.mx.Unlock()
+		return NotFoundPartitionErr
+	}
+
+	// Пока удерживается tp.mx, новые GetPartition не пройдут.
+	p.mx.Lock()
+	p.state = PartitionStopping
+	delete(tp.partitions, partID)
+	p.cond.Broadcast()
+	p.mx.Unlock()
+
+	tp.mx.Unlock()
+
+	return p.StopAndRemove(forceDelete)
+}
+
+// EnsurePartition создаёт процессор партиции локально, если его ещё нет.
+// Возвращает процессор и флаг created (была ли партиция только что создана).
+func (tp *TopicProcessor) EnsurePartition(part *topic.Partition) (*PartitionProcessor, bool) {
+	tp.mx.Lock()
+	defer tp.mx.Unlock()
+	if pp, ok := tp.partitions[part.Id]; ok {
+		return pp, false
+	}
+	pp := NewPartitionProcessor(tp.Context(), part.Id, tp.Name, part.StartOffset, tp.log, part.Retention, part.Replicas)
+	tp.partitions[part.Id] = pp
+	tp.log.Info("Partition dynamically created", "topic", tp.Name, "partition", part.Id)
+	return pp, true
+}
+
+// ListPartitions возвращает id всех локальных партиций топика.
+func (tp *TopicProcessor) ListPartitions() []int {
+	tp.mx.RLock()
+	defer tp.mx.RUnlock()
+	ids := make([]int, 0, len(tp.partitions))
+	for id := range tp.partitions {
+		ids = append(ids, id)
+	}
+	return ids
+}
 
 func (tp *TopicProcessor) ReplicateAndAppend(
 	ctx context.Context,
@@ -74,45 +120,52 @@ func (tp *TopicProcessor) ReplicateAndAppend(
 		return 0, err
 	}
 
-	// Захватываем локальный лок партиции. Другие партиции этого топика работают параллельно
-	partProcessor.mx.Lock()
-	defer partProcessor.mx.Unlock()
-
-	// 2. Вытягиваем метаданные распределенной партиции из etcd
+	// 2. Читаем актуальный набор реплик. Внешний лок на партицию не берём:
+	//    все обращения к процессору партиции защищены его собственными
+	//    внутренними блокировками (иначе был бы дедлок с RLock в геттерах).
 	replicas := partProcessor.GetReplicas()
 
-	targetOffset := partProcessor.GetLastOffset()
+	// TargetOffset — оффсет, на который ляжет новое сообщение (текущий nextOffset).
+	targetOffset := partProcessor.GetNextOffset()
+	leaderID := clusterNet.GetNodeId()
+
+	// Timestamp фиксируем ОДИН раз здесь и используем его и для пуша на все
+	// реплики, и для последующего локального коммита лидера (шаг 5) — так лог
+	// лидера и логи реплик содержат байт-в-байт идентичные (offset, timestamp,
+	// payload) записи.
+	timestamp := time.Now().UnixNano()
+
 	var wg sync.WaitGroup
 	ackChan := make(chan int, len(replicas))
 
-	// 3. Параллельный стриминг реплики по gRPC на все ноды из ISR
-	for _, peerID := range replicas {
-		if peerID.Id == partProcessor.GetId() {
-			continue // Себя пропускаем, запишем на диск Лидера позже
+	// 3. Параллельная репликация по gRPC на все НАЗНАЧЕННЫЕ реплики (и in-sync,
+	//    и ещё догоняющие лог — последние тоже принимают новые сообщения).
+	for _, replica := range replicas {
+		if replica.Id == leaderID {
+			continue // Себя пропускаем, запишем на диск лидера позже
 		}
 
-		// Запрашиваем типизированный gRPC-клиент у Брокера через интерфейс
-		client, err := clusterNet.GetGrpcClient(peerID.Id)
+		client, err := clusterNet.GetGrpcClient(replica.Id)
 		if err != nil {
-			tp.log.Error("Failed to get gRPC replication client", "peerID", peerID, "error", err)
+			tp.log.Error("Failed to get gRPC replication client", "peerID", replica.Id, "error", err)
 			continue
 		}
 
 		wg.Add(1)
-		go func(pid int, cl datatypes.ReplicationServiceClient) {
+		go func(pid int, cl gen.ReplicationServiceClient) {
 			defer wg.Done()
 
-			// Ограничиваем сетевой вызов к слейву в 1 секунду
 			rpcCtx, rpcCancel := context.WithTimeout(mergedCtx, 1*time.Second)
 			defer rpcCancel()
 
-			req := &datatypes.AppendEntriesRequest{
-				Term:         uint64(clusterNet.GetEpoch()), // Эпоха лидера из etcd
-				LeaderId:     int32(partProcessor.GetId()),
+			req := &gen.AppendEntriesRequest{
+				Term:         uint64(clusterNet.GetEpoch()),
+				LeaderId:     int32(leaderID),
 				TopicName:    tp.Name,
 				PartitionId:  uint32(partitionID),
 				TargetOffset: targetOffset,
 				Payload:      payload,
+				Timestamp:    timestamp,
 			}
 
 			res, err := cl.AppendEntries(rpcCtx, req)
@@ -120,37 +173,52 @@ func (tp *TopicProcessor) ReplicateAndAppend(
 				tp.log.Error("gRPC replication call failed", "slavePeer", pid, "error", err)
 				return
 			}
-
 			if res.Success {
 				ackChan <- pid
+			} else if res.NotInSync {
+				// Реплика ещё восстанавливает лог (StateReplicating) и осознанно
+				// отклонила push — это ожидаемо, догонит через FetchLog.
+				tp.log.Debug("Replica still catching up, push skipped", "slavePeer", pid)
 			} else {
-				tp.log.Warn("Slave rejected log append", "slavePeer", pid, "matchOffset", res.MatchOffset)
+				// Реплика уже in-sync, но offset разошёлся (гонка/лаг сети).
+				tp.log.Warn("Replica rejected log append: offset gap", "slavePeer", pid, "matchOffset", res.MatchOffset)
 			}
-		}(peerID.Id, client)
+		}(replica.Id, client)
 	}
 
 	wg.Wait()
 	close(ackChan)
 
-	// Считаем подтверждения (Лидер уже в зачете)
-	successCount := 1
-	for range ackChan {
-		successCount++
+	acked := make(map[int]bool)
+	for pid := range ackChan {
+		acked[pid] = true
 	}
 
-	// Строгая гарантия: коммитим только если ВСЕ живые ноды из ISR подтвердили прием лога
-	if successCount < len(replicas) {
-		return 0, fmt.Errorf("replication failed: ISR quorum broken (got %d/%d updates)", successCount, len(replicas))
+	// 4. Кворум считаем ТОЛЬКО по in-sync репликам (ISR). Лидер сам входит в ISR.
+	//    Реплики, которые ещё догоняют лог, не учитываются в кворуме, но новые
+	//    сообщения им всё равно отправляются.
+	isrTotal := 1 // лидер
+	isrAcked := 1 // лидер записывает локально ниже
+	for _, replica := range replicas {
+		if replica.Id == leaderID || !replica.InSync {
+			continue
+		}
+		isrTotal++
+		if acked[replica.Id] {
+			isrAcked++
+		}
 	}
 
-	// 4. Локальный коммит на Лидере (физическая запись в Append-Only файл)
-	finalOffset := partProcessor.PushQueue(payload)
+	if isrAcked < isrTotal {
+		return 0, fmt.Errorf("replication failed: ISR quorum broken (got %d/%d in-sync acks)", isrAcked, isrTotal)
+	}
 
-	// 5. Асинхронное слияние (сброс) оффсета в etcd через канал оптимизатора партиции
-	select {
-	case clusterNet.GetOffsetCommitChan() <- OffsetCommit{offset: int64(finalOffset), topic: tp.Name, partition: int32(partProcessor.id)}:
-	default:
-		// Если канал переполнен, оффсет запишется со следующей итерацией тикера
+	// 5. Локальный коммит на лидере (физическая запись в Append-Only файл).
+	// Используем AppendEntry (не PushQueue), чтобы offset и timestamp совпадали
+	// 1-в-1 с тем, что уже разослано репликам на шаге 3.
+	finalOffset, err := partProcessor.AppendEntry(targetOffset, timestamp, payload)
+	if err != nil {
+		return 0, fmt.Errorf("leader local commit failed: %w", err)
 	}
 
 	return finalOffset, nil

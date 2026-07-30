@@ -1,0 +1,29 @@
+services:
+  etcd:
+    image: registry.k8s.io/etcd:3.5.15-0
+    container_name: etcd-play
+    command:
+      - /usr/local/bin/etcd
+      - --name=etcd-node
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://127.0.0.1:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://127.0.0.1:2380
+      - --initial-cluster=etcd-node=http://127.0.0.1:2380
+      - --initial-cluster-token=etcd-play-token
+      - --initial-cluster-state=new
+    healthcheck:
+        test: [ "CMD-SHELL", "ETCDCTL_API=3 etcdctl --endpoints=http://127.0.0.1:2379 endpoint health" ]
+        interval: 5s
+        timeout: 5s
+        retries: 3
+        start_period: 5s
+    ports:
+      - "2379:2379"  # Порт для подключения Go-кода
+      - "2380:2380"  # Внутрикластерный порт
+    volumes:
+      - etcd_data:/etcd-data
+
+volumes:
+  etcd_data:

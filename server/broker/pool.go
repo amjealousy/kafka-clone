@@ -32,19 +32,20 @@ func NewProcessorPool(ctx context.Context, logger *slog.Logger) *ProcessorPool {
 		Lifecycle:      internal.DeriveLifecycle(ctx),
 	}
 }
-func (pool *ProcessorPool) ConfigureTopic(topic topic.Topic) error {
+
+// EnsureTopic возвращает процессор топика, создавая его при отсутствии.
+func (pool *ProcessorPool) EnsureTopic(t topic.Topic) *TopicProcessor {
 	pool.mx.Lock()
 	defer pool.mx.Unlock()
-	if _, ok := pool.topicProcessor[topic.Name]; ok {
-		return errors.New("topic already exists")
+	if id, ok := pool.topicProcessor[t.Name]; ok && id >= 0 && pool.processors[id] != nil {
+		return pool.processors[id]
 	}
-
-	pool.topicProcessor[topic.Name] = pool.nextId
-	processor := NewTopicProcessor(pool.nextId, topic.Name, pool.log, topic.Partitions, pool.Context())
+	pool.topicProcessor[t.Name] = pool.nextId
+	processor := NewTopicProcessor(pool.nextId, t.Name, pool.log, t.Partitions, pool.Context())
 	pool.processors = append(pool.processors, processor)
-	pool.log.Info("Added topic", "name", topic.Name)
+	pool.log.Info("Ensured topic", "name", t.Name)
 	pool.nextId++
-	return nil
+	return processor
 }
 
 func (pool *ProcessorPool) GetTopicProcessor(topic string) (*TopicProcessor, error) {
@@ -56,6 +57,19 @@ func (pool *ProcessorPool) GetTopicProcessor(topic string) (*TopicProcessor, err
 		return nil, errors.New("topic does not exist")
 	}
 	return pool.processors[id], nil
+}
+
+// ListTopics возвращает имена всех активных локальных топиков.
+func (pool *ProcessorPool) ListTopics() []string {
+	pool.mx.RLock()
+	defer pool.mx.RUnlock()
+	out := make([]string, 0, len(pool.topicProcessor))
+	for name, id := range pool.topicProcessor {
+		if id >= 0 && pool.processors[id] != nil {
+			out = append(out, name)
+		}
+	}
+	return out
 }
 
 func (pool *ProcessorPool) RemoveTopic(topic topic.Topic) error {

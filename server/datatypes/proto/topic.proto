@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package datatypes;
+
+
+option go_package = "kafka-clone/server/datatypes/proto-generated";
+
+message TopicPayload {
+  string topic_name = 1;
+  int64  numReplicas =2;
+}
+
+message TopicResponse {
+  string status =1;
+}

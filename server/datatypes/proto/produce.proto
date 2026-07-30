@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package datatypes;
+
+
+option go_package = "kafka-clone/server/datatypes/proto-generated";
+
+message ProducePayload{
+  string topic_name = 1;
+  string key = 2;
+  int64 partitionId =3;
+  bytes msg =4;
+}
+message ProduceResponse{
+  KafkaStatus status = 1;
+  optional string status_message = 2;
+}
+enum KafkaStatus{
+  Accepted = 0;
+  Error = 1;
+}

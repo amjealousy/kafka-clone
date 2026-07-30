@@ -16,5 +16,8 @@ func (p *Partition) AddReplica(replica Replica) {
 type Replica struct {
 	Id       int
 	BrokerID string
-	InSync   bool
+	// InSync == false означает "просто реплика": нода принимает новые сообщения
+	// от лидера, но её локальный лог ещё не восстановлен до актуального оффсета.
+	// InSync == true — лог догнан, реплика является in-sync (ISR).
+	InSync bool
 }

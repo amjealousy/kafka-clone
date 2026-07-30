@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"kafka-clone/server/datatypes"
+	"kafka-clone/server/datatypes/encode"
 	"log/slog"
 	"net"
 	"runtime/debug"
@@ -43,7 +43,7 @@ func NewTCPServer(log *slog.Logger) *TCPServer {
 		New: func() any {
 			return &PooledBuffer{
 				Body:  make([]byte, MaxBodySize),
-				Reply: make([]byte, MaxBodySize),
+				Reply: make([]byte, MaxBodySize+8),
 			}
 		},
 	}
@@ -56,7 +56,7 @@ func CreateListener(server *TCPServer, addr, port string) net.Listener {
 
 	l, err := net.Listen("tcp", fmt.Sprintf("%s:%s", addr, port))
 	if err != nil {
-		server.logger.Error("Failed to bind to port ", server.Port)
+		server.logger.Error("Failed to bind to port", "port", server.Port)
 		panic(err)
 	}
 
@@ -76,14 +76,13 @@ func (t *TCPServer) ReadLoop(ctx context.Context, l net.Listener) error {
 		go func() {
 			defer func() {
 				if r := recover(); r != nil {
-
-					t.logger.Error("[CRITICAL] panic in tcp handler: %v\nStack trace::\n%s\n", r, debug.Stack())
+					t.logger.Error("panic in tcp handler", "panic", r, "stack", string(debug.Stack()))
 				}
 			}()
 			t.logger.Info("[INFO] new tcp connection from ", "ip", accept.RemoteAddr())
 
 			t.handleConnection(accept)
-			
+
 		}()
 	}
 }
@@ -117,7 +116,7 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 	}
 
 	// 3. Парсим размер сообщения , correlation_id и cmd
-	header := datatypes.KafkaHeader{}
+	header := encode.KafkaHeader{}
 	header.MessageSize = binary.BigEndian.Uint32(buf.Header[0:4])
 	header.CorrelationID = binary.BigEndian.Uint32(buf.Header[4:8])
 	header.CommandType = binary.BigEndian.Uint32(buf.Header[8:12])
@@ -155,12 +154,12 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 
 type TCPContext struct {
 	con       net.Conn
-	Header    datatypes.KafkaHeader
+	Header    encode.KafkaHeader
 	buf       *PooledBuffer
 	flushFunc func()
 }
 
-func NewTCPContext(con net.Conn, buf *PooledBuffer, header datatypes.KafkaHeader, flushF func()) *TCPContext {
+func NewTCPContext(con net.Conn, buf *PooledBuffer, header encode.KafkaHeader, flushF func()) *TCPContext {
 	return &TCPContext{
 		con:       con,
 		buf:       buf,
@@ -178,9 +177,24 @@ func (ctx *TCPContext) Close() {
 }
 
 func (ctx *TCPContext) Write(b []byte) error {
-	_, err := ctx.con.Write(ctx.ProtocolClosure(len(b)))
-	if err != nil {
-		return err
+	if len(b) > MaxBodySize {
+		return errors.New("response body exceeds maximum size")
+	}
+
+	// Encode кладёт protobuf в начало Reply. Перед записью освобождаем первые
+	// 8 байт под заголовок ответа. copy корректно работает с пересекающимися
+	// срезами и не затирает начало protobuf, в отличие от прежней реализации.
+	packet := ctx.buf.Reply[:8+len(b)]
+	copy(packet[8:], b)
+	binary.BigEndian.PutUint32(packet[0:4], uint32(4+len(b)))
+	binary.BigEndian.PutUint32(packet[4:8], ctx.Header.CorrelationID)
+
+	for len(packet) > 0 {
+		n, err := ctx.con.Write(packet)
+		if err != nil {
+			return err
+		}
+		packet = packet[n:]
 	}
 	return nil
 }
@@ -196,25 +210,4 @@ func (ctx *TCPContext) Decode(b []byte, message proto.Message) error {
 		return err
 	}
 	return nil
-}
-
-func (ctx *TCPContext) ProtocolClosure(written int) []byte {
-	bodyLen := written
-	// 2. Вычисляем общий размер сообщения
-	// 4 байта (Correlation ID) + длина нашего тела
-	totalMessageSize := uint32(4 + bodyLen)
-
-	// 3. Собираем ответ в нашем пулированном буфере
-	// Записываем размер ответа (первые 4 байта)
-	binary.BigEndian.PutUint32(ctx.buf.Reply[0:4], totalMessageSize)
-
-	// Записываем Correlation ID (следующие 4 байта).
-	// По правилам Kafka он должен совпадать с тем, что прислал клиент,
-	// но если у вас по заданию жестко 7, пишем 7.
-	binary.BigEndian.PutUint32(ctx.buf.Reply[4:8], ctx.Header.CorrelationID)
-
-	// 5. Вычисляем итоговую длину всего пакета (8 байт заголовка + длина тела)
-	finalPacketSize := 8 + bodyLen
-
-	return ctx.buf.Reply[:finalPacketSize]
 }

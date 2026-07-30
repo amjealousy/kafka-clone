@@ -1,0 +1,1342 @@
+time=2026-07-30T04:48:07.118+03:00 level=INFO msg="replication gRPC server listening" nodeID=1 addr=127.0.0.1:6090
+time=2026-07-30T04:48:07.118+03:00 level=INFO msg="control-plane gRPC server listening" nodeID=1 addr=127.0.0.1:7090
+time=2026-07-30T04:48:07.131+03:00 level=INFO msg="[Discovery] Запуск отслеживания активных нод кластера..." nodeID=1
+time=2026-07-30T04:48:07.131+03:00 level=INFO msg="[TopicWatcher] Запуск отслеживания назначений топиков..." nodeID=1
+time=2026-07-30T04:48:07.131+03:00 level=INFO msg="Starting readloop" nodeID=1
+time=2026-07-30T04:48:07.131+03:00 level=DEBUG msg="Start election loop" nodeID=1 component=NodeCoordinator
+time=2026-07-30T04:48:07.132+03:00 level=INFO msg="broker is running. Press Ctrl+C to stop." nodeID=1 nodeID=1 grpc=127.0.0.1:6090 tcp=127.0.0.1:5090
+time=2026-07-30T04:48:07.133+03:00 level=INFO msg="[Watcher] Запущен мониторинг глобального состояния контроллера кластера" nodeID=1
+time=2026-07-30T04:48:07.135+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=0
+time=2026-07-30T04:48:07.135+03:00 level=DEBUG msg="Нода пытается стать Controller" nodeID=1 component=NodeCoordinator
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="=== ТЕКУЩИЕ АКТИВНЫЕ НОДЫ В КЛАСТЕРЕ ===" nodeID=1
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="Node ID: 1, Адрес: 127.0.0.1:6090 (Запущена в: 2026-07-30 04:48:07.118044236 +0300 MSK m=+0.013337342)\n" nodeID=1
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="Node ID: 2, Адрес: 127.0.0.1:6091 (Запущена в: 2026-07-30 04:48:07.118390026 +0300 MSK m=+0.013313468)\n" nodeID=1
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="registered cluster peer" nodeID=1 peerID=2 addr=127.0.0.1:6091
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="Node ID: 3, Адрес: 127.0.0.1:6092 (Запущена в: 2026-07-30 04:48:07.118217146 +0300 MSK m=+0.012314457)\n" nodeID=1
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="registered cluster peer" nodeID=1 peerID=3 addr=127.0.0.1:6092
+time=2026-07-30T04:48:07.135+03:00 level=INFO msg="========================================" nodeID=1
+time=2026-07-30T04:48:07.139+03:00 level=ERROR msg="[КЛАСТЕР] ↺ Нода ОБНОВИЛА данные: ID=3, Новый адрес=127.0.0.1:6092\n" nodeID=1
+time=2026-07-30T04:48:07.139+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:07.143+03:00 level=ERROR msg="[КЛАСТЕР] ↺ Нода ОБНОВИЛА данные: ID=2, Новый адрес=127.0.0.1:6091\n" nodeID=1
+time=2026-07-30T04:48:07.144+03:00 level=ERROR msg="[КЛАСТЕР] ↺ Нода ОБНОВИЛА данные: ID=1, Новый адрес=127.0.0.1:6090\n" nodeID=1
+time=2026-07-30T04:48:07.144+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:07.641+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:07.641+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:07.642+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:07.642+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:10.447+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:10.447+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:10.448+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:10.448+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:15.484+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:15.484+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:15.485+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:15.485+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:20.487+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:20.487+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:20.487+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:20.488+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:25.489+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:25.489+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:25.489+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:25.490+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:30.491+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:30.491+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:30.492+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:30.492+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:35.496+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:35.496+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:35.496+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:35.497+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:38.266+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:38.266+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:38.266+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:38.267+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:43.272+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:43.272+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:43.273+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:43.273+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:48.275+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:48.275+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:48.276+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:48.276+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:53.278+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:53.279+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:53.279+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:53.280+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:48:58.289+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:48:58.289+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:48:58.289+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:48:58.290+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:03.300+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:03.300+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:03.301+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:03.301+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:06.058+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:06.058+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:06.059+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:06.059+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:11.062+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:11.062+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:11.063+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:11.063+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:15.854+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=1
+time=2026-07-30T04:49:15.854+03:00 level=INFO msg="Ensured topic" nodeID=1 name=test-topic
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="Partition dynamically created" nodeID=1 topic=test-topic partition=0
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="[TopicWatcher] Локально создана партиция по назначению из etcd" nodeID=1 topic=test-topic partition=0
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="RunCleanWorker start" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="Partition dynamically created" nodeID=1 topic=test-topic partition=1
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="[TopicWatcher] Локально создана партиция по назначению из etcd" nodeID=1 topic=test-topic partition=1
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="Partition dynamically created" nodeID=1 topic=test-topic partition=2
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="[TopicWatcher] Локально создана партиция по назначению из etcd" nodeID=1 topic=test-topic partition=2
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="RunCleanWorker start" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="[CatchUp] Начинаем восстановление лога реплики" nodeID=1 topic=test-topic partition=2 leader=3
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="RunCleanWorker start" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:49:15.855+03:00 level=INFO msg="[CatchUp] Начинаем восстановление лога реплики" nodeID=1 topic=test-topic partition=1 leader=2
+time=2026-07-30T04:49:15.858+03:00 level=INFO msg="partition caught up with leader and is now IN-SYNC" nodeID=1 topic=test-topic partition=2 offset=0 leader=3
+time=2026-07-30T04:49:15.858+03:00 level=INFO msg="partition caught up with leader and is now IN-SYNC" nodeID=1 topic=test-topic partition=1 offset=0 leader=2
+time=2026-07-30T04:49:15.875+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=2
+time=2026-07-30T04:49:15.883+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=3
+time=2026-07-30T04:49:15.883+03:00 level=INFO msg="[CatchUp] Реплика стала IN-SYNC" nodeID=1 topic=test-topic partition=2
+time=2026-07-30T04:49:15.987+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=4
+time=2026-07-30T04:49:15.992+03:00 level=INFO msg="[CatchUp] Реплика стала IN-SYNC" nodeID=1 topic=test-topic partition=1
+time=2026-07-30T04:49:15.992+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=5
+time=2026-07-30T04:49:16.065+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:16.065+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:16.065+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:16.066+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:16.095+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=6
+time=2026-07-30T04:49:16.204+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=7
+time=2026-07-30T04:49:21.067+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:21.067+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:21.068+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:21.068+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:25.861+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:49:25.861+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:49:25.861+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:49:26.070+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:26.070+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:26.071+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:26.071+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:31.073+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:31.073+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:31.074+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:31.074+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:33.676+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:49:33.676+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:49:33.676+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:49:33.896+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:33.896+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:33.897+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:33.897+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:38.899+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:38.899+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:38.900+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:38.900+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:43.676+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:49:43.676+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:49:43.676+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:49:43.903+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:43.903+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:43.903+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:43.904+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:48.908+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:48.908+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:48.908+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:48.909+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:53.684+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:49:53.684+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:49:53.684+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:49:53.925+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:53.925+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:53.925+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:53.926+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:49:58.926+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:49:58.926+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:49:58.927+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:49:58.927+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:01.491+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:01.491+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:01.491+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:01.729+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:01.729+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:01.729+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:01.730+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:06.732+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:06.732+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:06.732+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:06.733+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:11.470+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:11.470+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:11.470+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:11.735+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:11.738+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:11.738+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:11.738+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:16.740+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:16.740+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:16.741+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:16.741+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:21.473+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:21.473+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:21.473+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:21.744+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:21.744+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:21.745+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:21.745+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:26.746+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:26.746+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:26.747+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:26.747+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:29.241+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:29.242+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:29.242+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:29.512+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:29.512+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:29.512+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:29.513+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:34.515+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:34.515+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:34.516+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:34.516+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:39.243+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:39.243+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:39.243+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:39.519+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:39.519+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:39.519+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:39.520+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:44.526+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:44.526+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:44.526+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:44.527+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:45.596+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:35056
+time=2026-07-30T04:50:45.596+03:00 level=INFO msg="handling command" nodeID=1 command=1
+time=2026-07-30T04:50:45.596+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  key:\"my-key\"  msg:\"test message in topic\""
+time=2026-07-30T04:50:45.610+03:00 level=DEBUG msg="committed offset" nodeID=1 topic=test-topic partition=0 offset=0
+time=2026-07-30T04:50:49.229+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:49.229+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:49.229+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:49.530+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:49.530+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:49.530+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:49.531+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:54.532+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:54.532+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:54.533+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:54.533+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:50:57.022+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:50:57.022+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:50:57.022+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:50:57.325+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:50:57.325+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:50:57.325+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:50:57.326+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:02.327+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:02.327+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:02.328+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:02.328+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:02.813+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:48722
+time=2026-07-30T04:51:02.813+03:00 level=INFO msg="handling command" nodeID=1 command=2
+time=2026-07-30T04:51:02.813+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  from_beginning:true  fin_offset:9223372036854775807"
+time=2026-07-30T04:51:07.019+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:51:07.019+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:51:07.019+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:51:07.329+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:07.329+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:07.330+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:07.330+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:12.353+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:12.353+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:12.354+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:12.354+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:17.046+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:51:17.046+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:51:17.046+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:51:17.356+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:17.356+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:17.356+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:17.357+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:22.362+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:22.362+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:22.362+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:22.363+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:24.923+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:57094
+time=2026-07-30T04:51:24.923+03:00 level=INFO msg="handling command" nodeID=1 command=2
+time=2026-07-30T04:51:24.923+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  from_beginning:true  till_end:true"
+time=2026-07-30T04:51:24.923+03:00 level=INFO msg="Client entered live-streaming log tailing mode" nodeID=1 topic=test-topic fromOffset=0
+time=2026-07-30T04:51:24.801+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:51:24.801+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:51:24.801+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:51:25.143+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:25.143+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:25.144+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:25.144+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:30.146+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:30.146+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:30.146+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:30.146+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:34.798+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:51:34.798+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:51:34.798+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:51:35.148+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:35.148+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:35.149+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:35.149+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:40.153+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:40.154+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:40.154+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:40.155+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:44.798+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:51:44.798+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:51:44.798+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:51:45.156+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:45.156+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:45.157+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:45.157+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:50.158+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:50.158+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:50.159+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:50.159+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:52.591+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:51:52.591+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:51:52.591+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:51:52.954+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:52.954+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:52.955+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:52.955+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:51:57.957+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:51:57.957+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:51:57.958+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:51:57.958+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:02.607+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:02.607+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:02.607+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:02.960+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:02.960+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:02.960+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:02.961+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:07.963+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:07.963+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:07.964+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:07.964+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:09.847+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:48814
+time=2026-07-30T04:52:09.847+03:00 level=INFO msg="handling command" nodeID=1 command=1
+time=2026-07-30T04:52:09.847+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  key:\"my-key2\"  msg:\"test message 2 in topic\""
+time=2026-07-30T04:52:09.857+03:00 level=DEBUG msg="committed offset" nodeID=1 topic=test-topic partition=0 offset=1
+time=2026-07-30T04:52:12.595+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:12.595+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:12.595+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:12.966+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:12.966+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:12.967+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:12.967+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:17.969+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:17.969+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:17.970+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:17.971+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:20.337+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:20.337+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:20.337+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:20.718+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:20.718+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:20.719+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:20.719+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:25.734+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:25.735+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:25.735+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:25.735+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:30.364+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:30.364+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:30.364+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:30.757+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:30.757+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:30.757+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:30.757+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:35.759+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:35.759+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:35.760+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:35.761+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:40.341+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:40.341+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:40.341+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:40.761+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:40.761+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:40.762+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:40.762+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:45.770+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:45.770+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:45.770+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:45.771+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:48.048+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:48.048+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:48.048+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:48.486+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:48.486+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:48.487+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:48.487+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:53.494+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:53.494+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:53.495+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:53.495+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:52:58.056+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:52:58.056+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:52:58.056+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:52:58.497+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:52:58.497+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:52:58.497+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:52:58.497+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:03.502+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:03.502+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:03.503+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:03.503+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:08.047+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:53:08.047+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:53:08.047+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:53:08.542+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:08.542+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:08.542+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:08.543+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:13.545+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:13.545+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:13.545+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:13.545+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:15.849+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:53:15.849+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:53:15.849+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:53:16.341+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:16.341+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:16.342+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:16.342+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:21.344+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:21.344+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:21.344+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:21.345+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:25.844+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:53:25.844+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:53:25.844+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:53:26.348+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:26.348+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:26.349+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:26.349+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:31.351+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:31.351+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:31.352+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:31.352+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:35.842+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:53:35.842+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:53:35.842+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:53:36.354+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:36.354+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:36.355+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:36.355+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:41.357+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:41.357+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:41.358+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:41.358+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:43.600+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:53:43.600+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:53:43.600+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:53:44.120+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:44.120+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:44.120+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:44.121+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:49.140+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:49.140+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:49.140+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:49.141+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:53.601+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:53:53.601+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:53:53.601+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:53:54.142+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:54.142+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:54.142+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:54.143+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:53:59.176+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:53:59.176+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:53:59.176+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:53:59.177+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:03.602+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:03.603+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:03.603+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:04.179+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:04.179+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:04.179+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:04.180+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:09.182+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:09.182+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:09.183+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:09.183+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:11.308+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:11.308+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:11.308+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:11.892+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:11.892+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:11.892+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:11.893+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:16.897+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:16.897+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:16.898+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:16.898+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:21.310+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:21.310+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:21.310+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:21.911+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:21.911+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:21.912+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:21.912+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:26.915+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:26.915+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:26.919+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:26.919+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:31.307+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:31.307+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:31.307+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:31.926+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:31.926+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:31.930+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:31.930+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:36.937+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:36.937+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:36.938+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:36.938+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:39.083+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:39.083+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:39.083+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:39.738+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:39.738+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:39.739+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:39.739+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:44.741+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:44.741+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:44.742+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:44.742+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:49.083+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:49.083+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:49.083+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:49.743+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:49.743+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:49.744+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:49.744+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:54.746+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:54.746+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:54.746+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:54.747+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:54:59.082+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:54:59.082+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:54:59.082+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:54:59.748+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:54:59.748+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:54:59.749+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:54:59.750+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:04.777+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:04.777+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:04.779+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:04.779+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:06.830+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:55:06.830+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:55:06.830+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:55:07.547+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:07.547+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:07.547+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:07.548+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:12.571+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:12.574+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:12.574+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:12.575+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:16.832+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:55:16.833+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:55:16.833+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:55:17.580+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:17.580+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:17.580+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:17.581+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:22.597+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:22.597+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:22.598+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:22.598+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:26.832+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:55:26.832+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:55:26.832+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:55:27.621+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:27.621+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:27.622+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:27.622+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:32.639+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:32.639+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:32.640+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:32.641+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:34.510+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:55:34.510+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:55:34.510+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:55:35.321+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:35.321+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:35.322+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:35.322+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:40.324+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:40.324+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:40.324+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:40.325+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:44.505+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:55:44.505+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:55:44.505+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:55:45.327+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:45.327+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:45.328+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:45.329+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:50.343+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:50.343+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:50.343+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:50.344+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:55:54.505+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:55:54.505+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:55:54.505+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:55:55.357+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:55:55.357+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:55:55.358+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:55:55.358+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:00.360+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:00.360+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:00.361+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:00.361+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:02.204+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:02.204+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:02.204+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:03.065+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:03.065+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:03.065+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:03.066+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:08.080+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:08.080+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:08.081+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:08.081+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:09.279+03:00 level=ERROR msg="[КЛАСТЕР] <<< Нода ОТКЛЮЧИЛАСЬ или УПАЛА: ID=2\n" nodeID=1
+time=2026-07-30T04:56:09.279+03:00 level=ERROR msg="Последний известный адрес ноды 2 был: 127.0.0.1:6091\n" nodeID=1
+time=2026-07-30T04:56:09.279+03:00 level=INFO msg="removed cluster peer" nodeID=1 peerID=2
+time=2026-07-30T04:56:09.282+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=8
+time=2026-07-30T04:56:09.286+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=9
+time=2026-07-30T04:56:09.290+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=10
+time=2026-07-30T04:56:12.206+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:12.206+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:12.206+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:13.084+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:13.084+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:13.085+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:13.085+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:18.087+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:18.087+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:18.087+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:18.088+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:22.208+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:22.208+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:22.208+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:23.089+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:23.090+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:23.090+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:23.091+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:28.095+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:28.095+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:28.095+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:28.096+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:29.917+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:29.917+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:29.917+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:30.821+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:30.821+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:30.822+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:30.822+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:35.825+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:35.825+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:35.825+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:35.826+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:39.941+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:39.941+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:39.941+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:40.841+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:40.841+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:40.841+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:40.842+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:45.853+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:45.853+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:45.854+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:45.854+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:49.910+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:49.910+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:49.910+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:50.857+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:50.857+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:50.858+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:50.858+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:55.860+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:55.860+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:55.860+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:55.861+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:56:57.670+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:56:57.670+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:56:57.670+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:56:58.623+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:56:58.623+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:56:58.623+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:56:58.624+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:03.625+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:03.625+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:03.626+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:03.627+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:07.675+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:57:07.675+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:57:07.675+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:57:08.630+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:08.630+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:08.630+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:08.631+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:13.632+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:13.632+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:13.633+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:13.633+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:17.670+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:57:17.670+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:57:17.670+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:57:18.635+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:18.635+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:18.635+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:18.635+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:23.637+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:23.638+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:23.638+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:23.638+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:25.400+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:57:25.400+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:57:25.400+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:57:26.371+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:26.371+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:26.372+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:26.372+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:31.374+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:31.374+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:31.375+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:31.375+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:35.402+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:57:35.402+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:57:35.402+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:57:36.377+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:36.377+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:36.378+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:36.378+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:41.380+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:41.380+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:41.381+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:41.381+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:45.400+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:57:45.400+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:57:45.400+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:57:46.395+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:46.395+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:46.395+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:46.395+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:51.434+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:51.434+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:51.436+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:51.436+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:53.094+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:57:53.094+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:57:53.094+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:57:54.134+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:54.134+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:54.134+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:54.135+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:57:59.139+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:57:59.139+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:57:59.139+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:57:59.140+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:03.109+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:03.109+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:03.109+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:04.157+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:04.157+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:04.158+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:04.158+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:07.514+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:45032
+time=2026-07-30T04:58:07.514+03:00 level=INFO msg="handling command" nodeID=1 command=2
+time=2026-07-30T04:58:07.514+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  from_beginning:true  till_end:true"
+time=2026-07-30T04:58:07.514+03:00 level=INFO msg="Client entered live-streaming log tailing mode" nodeID=1 topic=test-topic fromOffset=0
+time=2026-07-30T04:58:09.159+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:09.159+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:09.160+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:09.160+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:13.098+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:13.098+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:13.098+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:14.162+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:14.162+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:14.163+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:14.163+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:19.164+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:19.164+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:19.165+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:19.165+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:20.661+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:41730
+time=2026-07-30T04:58:20.661+03:00 level=INFO msg="handling command" nodeID=1 command=1
+time=2026-07-30T04:58:20.661+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  key:\"my-key3\"  msg:\"test3 message in topic\""
+time=2026-07-30T04:58:20.670+03:00 level=DEBUG msg="committed offset" nodeID=1 topic=test-topic partition=0 offset=2
+time=2026-07-30T04:58:20.670+03:00 level=WARN msg="Live stream consumer disconnected unexpectedly" nodeID=1 error="write tcp 127.0.0.1:5090->127.0.0.1:57094: write: broken pipe"
+time=2026-07-30T04:58:20.843+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:20.843+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:20.843+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:21.927+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:21.927+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:21.927+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:21.928+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:22.483+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:41732
+time=2026-07-30T04:58:22.483+03:00 level=INFO msg="handling command" nodeID=1 command=2
+time=2026-07-30T04:58:22.483+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  from_beginning:true  till_end:true"
+time=2026-07-30T04:58:22.483+03:00 level=INFO msg="Client entered live-streaming log tailing mode" nodeID=1 topic=test-topic fromOffset=0
+time=2026-07-30T04:58:26.931+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:26.931+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:26.932+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:26.932+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:30.843+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:30.844+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:30.844+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:31.934+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:31.934+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:31.934+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:31.935+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:36.936+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:36.936+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:36.937+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:36.937+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:40.857+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:40.858+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:40.858+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:41.945+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:41.945+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:41.946+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:41.946+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:46.949+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:46.949+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:46.949+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:46.950+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:48.557+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:48.557+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:48.557+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:49.663+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:49.663+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:49.663+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:49.664+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:54.665+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:54.665+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:54.666+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:54.666+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:58:58.554+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:58:58.555+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:58:58.554+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:58:59.670+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:58:59.670+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:58:59.673+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:58:59.674+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:04.678+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:04.678+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:04.681+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:04.682+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:08.555+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:59:08.555+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:59:08.555+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:59:09.683+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:09.683+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:09.684+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:09.684+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:14.685+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:14.685+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:14.686+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:14.687+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:16.258+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:59:16.258+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:59:16.258+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:59:17.426+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:17.426+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:17.427+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:17.427+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:22.439+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:22.439+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:22.439+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:22.440+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:26.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:59:26.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:59:26.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:59:27.444+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:27.444+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:27.444+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:27.445+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:32.457+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:32.457+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:32.457+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:32.458+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:36.262+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:59:36.262+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:59:36.262+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:59:37.459+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:37.459+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:37.459+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:37.460+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:42.462+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:42.462+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:42.462+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:42.463+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:43.977+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:59:43.977+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:59:43.977+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:59:45.177+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:45.177+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:45.178+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:45.178+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:50.184+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:50.184+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:50.185+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:50.185+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T04:59:53.966+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T04:59:53.966+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T04:59:53.966+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T04:59:55.194+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T04:59:55.195+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T04:59:55.198+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T04:59:55.199+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:00.204+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:00.204+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:00.205+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:00.205+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:03.993+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:03.993+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:03.993+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:00:05.209+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:05.209+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:05.210+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:05.210+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:10.213+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:10.213+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:10.213+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:10.215+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:11.683+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:11.684+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:11.684+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:00:12.953+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:12.953+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:12.953+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:12.954+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:17.957+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:17.957+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:17.957+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:17.958+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:21.687+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:21.687+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:21.687+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:00:22.968+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:22.968+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:22.969+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:22.969+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:27.971+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:27.971+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:27.972+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:27.972+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:31.709+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:31.709+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:00:31.709+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:32.976+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:32.976+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:32.977+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:32.977+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:37.986+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:37.986+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:37.986+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:37.987+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:39.517+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:39.517+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:39.517+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:00:40.832+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:40.832+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:40.832+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:40.833+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:45.844+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:45.844+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:45.845+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:45.845+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:49.509+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:49.509+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:49.509+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:00:50.853+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:50.854+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:50.854+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:50.855+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:55.857+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:00:55.857+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:00:55.857+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:00:55.858+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:00:59.510+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:00:59.510+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:00:59.510+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:00.863+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:00.863+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:00.863+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:00.864+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:05.870+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:05.870+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:05.871+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:05.871+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:07.234+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:01:07.234+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:07.234+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:01:08.619+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:08.619+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:08.619+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:08.620+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:13.625+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:13.625+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:13.626+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:13.626+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:17.239+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:01:17.239+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:17.239+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:01:18.627+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:18.627+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:18.628+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:18.628+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:23.639+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:23.639+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:23.640+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:23.640+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:27.255+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:01:27.255+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:01:27.255+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:28.654+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:28.654+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:28.654+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:28.655+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:33.659+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:33.659+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:33.660+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:33.660+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:34.923+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:01:34.923+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:01:34.923+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:36.359+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:36.359+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:36.360+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:36.360+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:41.364+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:41.364+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:41.365+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:41.365+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:42.399+03:00 level=ERROR msg="[КЛАСТЕР] >>> Нода ПОДКЛЮЧИЛАСЬ: ID=2, Адрес=127.0.0.1:6091\n" nodeID=1
+time=2026-07-30T05:01:42.399+03:00 level=INFO msg="registered cluster peer" nodeID=1 peerID=2 addr=127.0.0.1:6091
+time=2026-07-30T05:01:42.405+03:00 level=ERROR msg="[КЛАСТЕР] ↺ Нода ОБНОВИЛА данные: ID=2, Новый адрес=127.0.0.1:6091\n" nodeID=1
+time=2026-07-30T05:01:44.542+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=11
+time=2026-07-30T05:01:44.549+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=12
+time=2026-07-30T05:01:44.552+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=13
+time=2026-07-30T05:01:44.555+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=14
+time=2026-07-30T05:01:44.559+03:00 level=INFO msg="[TopicWatcher] Изменение топика" nodeID=1 topic=test-topic version=15
+time=2026-07-30T05:01:44.952+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:44.952+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:01:44.952+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:01:46.371+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:46.371+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:46.371+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:46.372+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:51.387+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:51.387+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:51.387+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:51.388+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:01:54.932+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:01:54.932+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:01:54.932+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:01:56.390+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:01:56.390+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:01:56.390+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:01:56.391+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:01.392+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:01.392+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:01.393+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:01.393+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:02.680+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:02.680+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:02.680+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:04.153+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:04.153+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:04.153+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:04.154+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:09.156+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:09.156+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:09.156+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:09.157+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:12.693+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:12.693+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:12.693+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:14.162+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:14.162+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:14.163+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:14.164+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:19.165+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:19.165+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:19.165+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:19.166+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:22.680+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:22.680+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:22.680+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:24.167+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:24.167+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:24.167+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:24.168+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:29.182+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:29.182+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:29.183+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:29.183+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:30.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:30.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:30.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:31.899+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:31.899+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:31.900+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:31.900+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:36.904+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:36.904+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:36.904+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:36.905+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:40.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:40.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:40.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:41.907+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:41.907+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:41.907+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:41.908+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:46.925+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:46.925+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:46.926+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:46.926+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:50.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:50.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:50.391+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:51.932+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:51.932+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:51.933+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:51.933+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:56.946+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:56.946+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:56.946+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:56.947+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:02:58.067+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:02:58.067+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:02:58.067+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:02:59.628+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:02:59.628+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:02:59.628+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:02:59.629+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:04.630+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:04.630+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:04.630+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:04.631+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:08.075+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:03:08.075+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:03:08.075+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:03:09.632+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:09.633+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:09.633+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:09.634+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:14.641+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:14.641+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:14.644+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:14.644+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:18.069+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:03:18.069+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:03:18.069+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:03:19.673+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:19.673+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:19.676+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:19.676+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:24.678+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:24.678+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:24.679+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:24.679+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:25.838+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:03:25.838+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:03:25.838+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:03:27.457+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:27.457+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:27.458+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:27.458+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:32.461+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:32.462+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:32.462+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:32.463+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:35.833+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:03:35.833+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:03:35.833+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:03:37.464+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:37.464+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:37.464+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:37.465+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:42.466+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:42.466+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:42.467+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:42.467+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:45.835+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:03:45.835+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:03:45.835+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:03:47.486+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:47.486+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:47.486+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:47.487+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:52.503+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:52.503+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:52.504+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:52.504+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:03:53.562+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:03:53.562+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:03:53.562+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:03:55.237+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:03:55.237+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:03:55.237+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:03:55.238+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:00.248+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:00.248+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:00.249+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:00.249+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:03.587+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:04:03.587+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:03.587+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:05.261+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:05.261+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:05.262+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:05.263+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:10.274+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:10.274+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:10.274+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:10.275+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:13.562+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:13.562+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:04:13.562+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:15.280+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:15.280+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:15.281+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:15.282+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:20.286+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:20.286+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:20.286+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:20.287+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:21.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:21.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:21.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:04:22.994+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:22.994+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:22.995+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:22.995+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:27.998+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:27.998+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:27.998+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:27.999+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:31.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:31.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:31.269+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:04:33.001+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:33.001+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:33.002+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:33.002+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:38.003+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:38.003+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:38.007+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:38.007+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:41.274+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:41.274+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:04:41.274+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:43.011+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:43.011+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:43.014+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:43.015+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:48.022+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:48.022+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:48.024+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:48.024+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:48.983+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:04:48.983+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:48.983+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:50.742+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:50.742+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:50.743+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:50.743+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:55.745+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:04:55.745+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:04:55.746+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:04:55.746+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:04:56.633+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:55102
+time=2026-07-30T05:04:56.633+03:00 level=INFO msg="handling command" nodeID=1 command=1
+time=2026-07-30T05:04:56.633+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  key:\"my-key4\"  msg:\"test3 message in topic\""
+time=2026-07-30T05:04:56.642+03:00 level=WARN msg="Live stream consumer disconnected unexpectedly" nodeID=1 error="write tcp 127.0.0.1:5090->127.0.0.1:41732: write: broken pipe"
+time=2026-07-30T05:04:56.642+03:00 level=DEBUG msg="committed offset" nodeID=1 topic=test-topic partition=0 offset=3
+time=2026-07-30T05:04:56.642+03:00 level=WARN msg="Live stream consumer disconnected unexpectedly" nodeID=1 error="write tcp 127.0.0.1:5090->127.0.0.1:45032: write: broken pipe"
+time=2026-07-30T05:04:58.983+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:04:58.983+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:04:58.983+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:05:00.754+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:00.754+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:00.755+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:00.755+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:05.759+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:05.759+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:05.759+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:05.760+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:08.981+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:05:08.981+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:05:08.981+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:05:10.761+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:10.761+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:10.762+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:10.762+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:14.875+03:00 level=INFO msg="[INFO] new tcp connection from " nodeID=1 ip=127.0.0.1:52356
+time=2026-07-30T05:05:14.875+03:00 level=INFO msg="handling command" nodeID=1 command=2
+time=2026-07-30T05:05:14.875+03:00 level=DEBUG msg="Kafka body" nodeID=1 payload="topic_name:\"test-topic\"  from_beginning:true  till_end:true"
+time=2026-07-30T05:05:14.875+03:00 level=INFO msg="Client entered live-streaming log tailing mode" nodeID=1 topic=test-topic fromOffset=0
+time=2026-07-30T05:05:15.764+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:15.764+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:15.764+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:15.765+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:16.666+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:05:16.666+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:05:16.666+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:05:18.467+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:18.467+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:18.468+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:18.468+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:23.482+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:23.482+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:23.483+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:23.483+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:26.691+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:05:26.691+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:05:26.691+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:05:28.492+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:28.492+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:28.493+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:28.493+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:33.495+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:33.495+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:33.496+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:33.496+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:36.668+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=0 topic-partition=test-topic
+time=2026-07-30T05:05:36.668+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=2 topic-partition=test-topic
+time=2026-07-30T05:05:36.668+03:00 level=INFO msg="RunCleanWorker triggered" nodeID=1 topic=test-topic component=[PartitionProcessor] partId=1 topic-partition=test-topic
+time=2026-07-30T05:05:38.503+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:38.503+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:38.504+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:38.504+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:43.507+03:00 level=DEBUG msg="Текущий статус ControllerState" nodeID=1 component=NodeCoordinator state="{LeaderId:3 LeaderEpoch:1}"
+time=2026-07-30T05:05:43.507+03:00 level=DEBUG msg="Текущий Controller" nodeID=1 component=NodeCoordinator currentController=3
+time=2026-07-30T05:05:43.508+03:00 level=INFO msg="setting epoch" nodeID=1 num=1
+time=2026-07-30T05:05:43.508+03:00 level=INFO msg="Переведен в режим FOLLOWER. Controller в кластере:" nodeID=1 component=NodeCoordinator nodeId=1 controllerID=3 epoch=1
+time=2026-07-30T05:05:45.402+03:00 level=INFO msg="received shutdown signal" nodeID=1 signal=terminated
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="initiating graceful shutdown..." nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="waiting for active tasks to complete..." nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="all active tasks finished" nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="flushing topics state to mongodb..." nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="graceful shutdown successfully completed" nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="closing mongodb connection..." nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=INFO msg="broker stopped cleanly. Bye!" nodeID=1
+time=2026-07-30T05:05:45.403+03:00 level=WARN msg="[Discovery] Сессия etcd потеряна!" nodeID=1 component=NodeCoordinator nodeKey=/kafka/nodes/1
+time=2026-07-30T05:05:45.403+03:00 level=WARN msg="[Coordinator] Обнаружена потеря сессии etcd! Запускаем аварийный режим." nodeID=1 component=NodeCoordinator
+time=2026-07-30T05:05:45.403+03:00 level=ERROR msg="Node goes to cluster paused" nodeID=1 component=NodeCoordinator

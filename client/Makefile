@@ -6,3 +6,5 @@ send:
 
 proto:
 	@protoc --go_out=. --go_opt=paths=source_relative {$file}
+client-build:
+	@go build -o kafka-client ../client

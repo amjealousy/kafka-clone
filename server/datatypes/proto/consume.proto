@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package datatypes;
+
+
+option go_package = "kafka-clone/server/datatypes/proto-generated";
+
+message ConsumePayload {
+  string topic_name = 1;
+  int64 partitionID = 2;
+  oneof start_position {
+    uint64 start_offset = 3;
+    bool from_beginning = 5; // если true, то читаем с начала
+  }
+  oneof fin_position {
+    uint64 fin_offset = 4;
+    bool till_end = 6;       // если true, то читаем до конца и продолжаем стримить
+  }
+}
+
+message ConsumeResponse {
+  int64 timestamp = 1;
+  uint64 offset = 2;
+  bytes msg = 3;
+}
+
+message ConsumeResponseList {
+  repeated ConsumeResponse responses = 1;
+  optional string error = 2; // например, "нода не in-sync реплика для этой партиции"
+}

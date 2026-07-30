@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package datatypes;
+
+option go_package = "kafka-clone/server/datatypes/proto-generated";
+
+// Сервис, который запускается на каждом брокере для приема реплик
+service ReplicationService {
+  rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesResponse);
+  // FetchLog используется отстающей репликой (follower) чтобы пакетно
+  // выкачать недостающий диапазон лога у лидера партиции (catch-up).
+  rpc FetchLog(FetchLogRequest) returns (FetchLogResponse);
+  rpc InvalidateLastOffset(InvalidateRequest) returns (InvalidateAck);
+}
+enum Status{
+  Ok = 0;
+  Error =1;
+
+}
+message InvalidateRequest{
+  uint64 term = 1;          // Текущая эпоха (терм) Лидера
+  int32 leader_id = 2;      // ID Лидера
+  string topic_name = 3;    // Имя топика
+  uint32 partition_id = 4;  // Номер партиции
+  uint64 target_offset = 5; // На какой оффсет Слейв должен удалить сообщение
+}
+message InvalidateAck{
+  Status Status  = 1;
+  optional string Message = 2;
+}
+
+message AppendEntriesRequest {
+  uint64 term = 1;          // Текущая эпоха (терм) Лидера
+  int32 leader_id = 2;      // ID Лидера
+  string topic_name = 3;    // Имя топика
+  uint32 partition_id = 4;  // Номер партиции
+  uint64 target_offset = 5; // На какой оффсет Слейв должен положить сообщение
+  bytes payload = 6;        // Бинарное тело сообщения
+  int64 timestamp = 7;      // Оригинальный timestamp записи, назначенный Лидером
+                            // (чтобы лог реплики был байт-в-байт идентичен логу лидера)
+}
+
+message AppendEntriesResponse {
+  uint64 term = 1;          // Эпоха Слейва (для детекта отставания Лидера)
+  bool success = 2;         // Успешно ли записано на диск Слейва
+  uint64 match_offset = 3;  // Актуальный оффсет Слейва после записи
+  bool not_in_sync = 4;     // true, если реплика ещё не in-sync (восстанавливает
+                            // лог через FetchLog) и поэтому НЕ приняла запись —
+                            // это не "разрыв последовательности", а осознанный
+                            // отказ до полного catch-up
+}
+
+// FetchLogRequest — запрос отстающей реплики к лидеру на выкачивание лога.
+message FetchLogRequest {
+  string topic_name = 1;    // Имя топика
+  uint32 partition_id = 2;  // Номер партиции
+  uint64 from_offset = 3;   // С какого оффсета начинать выкачивание
+  uint32 max_messages = 4;  // Максимум сообщений в одном ответе (батч)
+}
+
+// LogEntry — одна запись лога (сохраняет оригинальный оффсет и timestamp).
+message LogEntry {
+  uint64 offset = 1;
+  int64 timestamp = 2;
+  bytes payload = 3;
+}
+
+// FetchLogResponse — пачка записей лога от лидера.
+message FetchLogResponse {
+  repeated LogEntry entries = 1; // Записи в порядке возрастания оффсета
+  uint64 high_watermark = 2;     // Последний доступный оффсет у лидера (nextOffset)
+  bool leader = 3;               // Является ли отвечающая нода лидером партиции
+}
