@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	broker "kafka-clone/server/broker"
-	"kafka-clone/server/datatypes"
+	brokertypes "kafka-clone/server/datatypes/broker"
 	"log/slog"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -36,16 +38,57 @@ type NodeCoordinator struct {
 	syncingMx sync.Mutex
 	syncing   map[string]bool
 
-	// membersMx защищает карту известных нод кластера (id -> состояние).
+	// membersMx защищает мапу известных нод кластера (id -> состояние).
+	// ВАЖНО: это watch-кэш для ВНУТРЕННЕЙ логики (репликация, реконфигурация
+	// партиций). Внешние read-ручки его НЕ используют — они читают etcd
+	// напрямую (см. cluster_view.go), иначе отвалившаяся от кластера нода
+	// продолжала бы отдавать клиенту правдоподобный устаревший состав.
 	membersMx sync.RWMutex
 	members   map[int64]NodeState
 
-	address        string // gRPC-адрес репликации (ReplicationService) данной ноды
-	tcpAddress     string // TCP-адрес для produce/consume клиентов
-	controlAddress string // gRPC-адрес control-plane API (ControlService)
-	logger         *slog.Logger
+	// addresses — advertised-адреса этой ноды, опубликованные в etcd.
+	addresses NodeAddresses
+	logger    *slog.Logger
+
+	// viewMx сериализует чтение снимка кластера из etcd и заодно работает как
+	// singleflight: параллельные запросы админки не превращаются в N чтений.
+	viewMx        sync.Mutex
+	viewCache     *clusterView
+	viewFetchedAt time.Time
+
+	// controlConns — переиспользуемые gRPC-соединения с control-plane других
+	// нод; нужны для проксирования мутаций на контроллер.
+	controlMx    sync.Mutex
+	controlConns map[string]*grpc.ClientConn
+
+	// paused — нода в аварийном режиме после потери сессии etcd. Он же
+	// защищает от параллельного запуска нескольких recoveryLoop: потерю
+	// сессии может обнаружить и keepalive-горутина, и ре-бутстрап WatchNodes.
+	paused atomic.Bool
+
+	// rebalanceCh — очередь выбывших нод на реконфигурацию партиций. Очередь,
+	// а не горутина на каждое выбытие: после ре-бутстрапа watch'а разом
+	// "уходит" сразу несколько нод, и параллельные rebalanceAfterNodeLoss
+	// устроили бы шторм записей в etcd по одним и тем же топикам.
+	rebalanceCh chan int64
 
 	offsetCommitCh chan broker.OffsetCommit
+}
+
+// Close останавливает фоновые циклы координатора и закрывает исходящие
+// control-plane соединения. Вызывается при штатной остановке ноды.
+func (n *NodeCoordinator) Close() error {
+	n.cancel()
+
+	n.controlMx.Lock()
+	defer n.controlMx.Unlock()
+	for addr, conn := range n.controlConns {
+		if err := conn.Close(); err != nil {
+			n.logger.Warn("failed to close control-plane connection", "addr", addr, "error", err)
+		}
+		delete(n.controlConns, addr)
+	}
+	return nil
 }
 
 func NewNodeCoordinator(nodeID int64, logger *slog.Logger, broker *broker.Broker, cli *clientv3.Client) *NodeCoordinator {
@@ -66,25 +109,25 @@ func NewNodeCoordinator(nodeID int64, logger *slog.Logger, broker *broker.Broker
 		syncing:        make(map[string]bool),
 		members:        make(map[int64]NodeState),
 		logger:         logger,
+		rebalanceCh:    make(chan int64, 64),
 	}
 
 	return b
 }
-func (n *NodeCoordinator) ClusterPause(resume chan bool) {
-	n.mu.Lock()
-	defer n.mu.Unlock()
-	_ = n.broker.ToFollower()
-	n.logger.Error("Node goes to cluster paused")
-	//todo this method is filler a bit for current state, remake for infra needs
-	<-resume
-	n.ClusterResume()
 
-}
-
-func (n *NodeCoordinator) ClusterResume() {
-	n.mu.Lock()
-	defer n.mu.Unlock()
-	n.logger.Info("[Redundant] Node goes to cluster resume")
+// IsPaused сообщает, находится ли нода в аварийном режиме после потери сессии
+// etcd. Пока флаг взведён, нода не является полноценным участником кластера:
+// её ключ в /kafka/nodes/ истёк, партиции переназначены, выборы остановлены.
+//
+// Раньше эта пауза была реализована горутиной ClusterPause, которая брала
+// n.mu на запись и блокировалась на канале resume в ожидании recoveryLoop.
+// Это был гарантированный дедлок: recoveryLoop по пути к отправке resume
+// вызывает GetLeaderId, а тот берёт n.mu.RLock и навсегда упирается в
+// удерживаемый write-lock. Нода перерегистрировалась в etcd, выглядела для
+// остальных живой и при этом навсегда оставалась Unroled с заблокированным
+// n.mu. Состояние-флаг решает ту же задачу, ничего не блокируя.
+func (n *NodeCoordinator) IsPaused() bool {
+	return n.paused.Load()
 }
 
 func (n *NodeCoordinator) UpdateLeaderNode(leader int64) {
@@ -144,7 +187,7 @@ func (n *NodeCoordinator) SwitchToControllerMode(epoch int64) {
 	n.LeaderNodeId = int(n.nodeID)
 	n.mu.Unlock()
 
-	n.publishOwnRole(n.ctx, datatypes.Controller)
+	n.publishOwnRole(n.ctx, brokertypes.Controller)
 
 	n.logger.Info("★★★ УСПЕШНО СТАЛ Controller  ★★★", slog.Any("nodeId", n.nodeID), slog.Any("epoch", epoch))
 }
@@ -156,7 +199,7 @@ func (n *NodeCoordinator) SwitchToFollowerMode(controllerID int64, epoch int64) 
 	n.LeaderNodeId = int(controllerID)
 	n.mu.Unlock()
 
-	n.publishOwnRole(n.ctx, datatypes.Follower)
+	n.publishOwnRole(n.ctx, brokertypes.Follower)
 	n.logger.Info("Переведен в режим FOLLOWER. Controller в кластере:", slog.Any("nodeId", n.nodeID), slog.Int64("controllerID", controllerID), slog.Int64("epoch", epoch))
 }
 
@@ -164,4 +207,13 @@ func (n *NodeCoordinator) GetLeaderId() int {
 	n.mu.RLock()
 	defer n.mu.RUnlock()
 	return n.LeaderNodeId
+}
+
+func (n *NodeCoordinator) invalidateClusterView() {
+	n.viewMx.Lock()
+	defer n.viewMx.Unlock()
+
+	n.viewCache = nil
+	n.viewFetchedAt = time.Time{}
+
 }

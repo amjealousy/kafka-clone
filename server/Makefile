@@ -1,20 +1,20 @@
 PROTO_SRC := datatypes/proto
 PROTO_OUT := datatypes/proto-generated
 COMPOSE_FILE ?= etcd.yaml
+BINARY := kafka-clone-server
 
-.PHONY: all dirs run stop proto proto-clean
+HOST ?= 127.0.0.1
+ETCD_ENDPOINTS ?= 127.0.0.1:2379
+CORS_ORIGINS ?= http://127.0.0.1:8090,http://127.0.0.1:8091,http://127.0.0.1:8092
+
+.PHONY: all dirs build server-build build-all run restart stop clean \
+	proto proto-clean etcd etcd-stop test fmt-check vet check
 
 all: run
 
 # Перегенерировать *.pb.go / *_grpc.pb.go из datatypes/proto/*.proto.
-# Генерируемый код кладём в datatypes/protogenerated — отдельно от
-# datatypes/*.go, написанного вручную (encode.go, broker.go, peer.go и т.д.),
-# чтобы не путать sgenerated-код с бизнес-логикой.
-#
-# Требует protoc и плагины protoc-gen-go / protoc-gen-go-grpc:
-#   go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-#   go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-# (плагины ставятся в $(go env GOPATH)/bin — он должен быть в $PATH)
+# Генерируемый код лежит отдельно от написанной вручную бизнес-логики.
+# Требует protoc и плагинов protoc-gen-go / protoc-gen-go-grpc в PATH.
 proto:
 	@mkdir -p $(PROTO_OUT)
 	protoc -I $(PROTO_SRC) \
@@ -22,21 +22,29 @@ proto:
 		--go-grpc_out=$(PROTO_OUT) --go-grpc_opt=paths=source_relative \
 		$(PROTO_SRC)/*.proto
 
-
 proto-clean:
 	@rm -f $(PROTO_OUT)/*.pb.go
 
 dirs:
 	@mkdir -p node1 node2 node3
 
-server-build: dirs
-	@go build -o server ../server
+# Локальный бинарник нужен для запуска трёх нод из отдельных рабочих каталогов.
+build server-build: dirs
+	@go build -o $(BINARY) .
 
-run: server-build stop
-	@cd node1; ../server -id 1 -tcp 127.0.0.1:5090 -grpc 127.0.0.1:6090 -control 127.0.0.1:7090 -etcd 127.0.0.1:2379 & echo $$! > server.pid
-	@cd node2; ../server -id 2 -tcp 127.0.0.1:5091 -grpc 127.0.0.1:6091 -control 127.0.0.1:7091 -etcd 127.0.0.1:2379 & echo $$! > server.pid
-	@cd node3; ../server -id 3 -tcp 127.0.0.1:5092 -grpc 127.0.0.1:6092 -control 127.0.0.1:7092 -etcd 127.0.0.1:2379 & echo $$! > server.pid
-	@echo "Started brokers: $$(cat node1/server.pid) $$(cat node2/server.pid) $$(cat node3/server.pid)"
+# Проверяет сборку всех серверных пакетов, не затрагивая сломанный client/.
+build-all:
+	@cd .. && go build ./server/...
+
+run: build
+	@$(MAKE) --no-print-directory stop
+	@cd node1; ../$(BINARY) -id 1 -tcp $(HOST):5090 -grpc $(HOST):6090 -control $(HOST):7090 -http $(HOST):8090 -etcd $(ETCD_ENDPOINTS) -cors-origins "$(CORS_ORIGINS)" & echo $$! > server.pid
+	@cd node2; ../$(BINARY) -id 2 -tcp $(HOST):5091 -grpc $(HOST):6091 -control $(HOST):7091 -http $(HOST):8091 -etcd $(ETCD_ENDPOINTS) -cors-origins "$(CORS_ORIGINS)" & echo $$! > server.pid
+	@cd node3; ../$(BINARY) -id 3 -tcp $(HOST):5092 -grpc $(HOST):6092 -control $(HOST):7092 -http $(HOST):8092 -etcd $(ETCD_ENDPOINTS) -cors-origins "$(CORS_ORIGINS)" & echo $$! > server.pid
+	@echo "Брокеры запущены: $$(cat node1/server.pid) $$(cat node2/server.pid) $$(cat node3/server.pid)"
+	@echo "Админка: http://$(HOST):8090"
+
+restart: run
 
 stop:
 	@for dir in node1 node2 node3; do \
@@ -47,9 +55,25 @@ stop:
 			rm -f "$$pid_file"; \
 		fi; \
 	done
-	@pkill -u "$$(id -u)" -x server 2>/dev/null || true
+
+clean: stop
+	@rm -f $(BINARY)
 
 etcd:
 	docker compose -f $(COMPOSE_FILE) up -d --wait
-	@echo "Etcd была успешно развернута."
+	@echo "Etcd запущен."
 
+etcd-stop:
+	docker compose -f $(COMPOSE_FILE) down
+
+test:
+	@cd .. && go test -count=1 -race ./server/...
+
+fmt-check:
+	@cd .. && files=$$(gofmt -l server/); \
+		if [ -n "$$files" ]; then echo "Требуется gofmt:"; echo "$$files"; exit 1; fi
+
+vet:
+	@cd .. && go vet ./server/...
+
+check: build-all test fmt-check vet

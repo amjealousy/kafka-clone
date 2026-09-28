@@ -100,6 +100,54 @@ func (s *Segment) Append(offset uint64, timestamp int64, payload []byte) (int, e
 	return n, nil
 }
 
+// TruncateFrom физически удаляет из сегмента все записи с оффсетом >= offset:
+// файл обрезается ровно до байтовой позиции первой удаляемой записи, а из
+// in-memory индекса убираются соответствующие ключи. Используется для отката
+// записи, которую лидер разослал репликам, но сам закоммитить не смог
+// (см. PartitionProcessor.InvalidateOffset).
+//
+// Вызывающий обязан синхронизировать доступ к сегменту (в нашем случае —
+// PartitionProcessor держит p.mx на запись).
+func (s *Segment) TruncateFrom(offset uint64) error {
+	// Записей с таким оффсетом в сегменте нет — откатывать нечего.
+	if offset >= s.NextOffset {
+		return nil
+	}
+
+	if offset < s.BaseOffset {
+		return fmt.Errorf("truncate offset %d is below segment base offset %d", offset, s.BaseOffset)
+	}
+
+	pos, exists := s.index[offset]
+	if !exists {
+		return fmt.Errorf("offset %d not found in segment %s", offset, s.Path)
+	}
+
+	// Обрезаем по пути, а не через s.File.Truncate: файл открыт с O_APPEND, и
+	// на Windows усечение такого дескриптора запрещено (Access is denied).
+	// Сегменты никогда не переименовываются, поэтому путь однозначно указывает
+	// на тот же файл. Дозапись через открытый дескриптор после этого
+	// продолжается уже с новой (укороченной) позиции конца файла.
+	if err := os.Truncate(s.Path, pos); err != nil {
+		return err
+	}
+	// fsync: обрезание должно пережить падение процесса, иначе после рестарта
+	// recoverIndex снова увидит откаченную запись как валидную.
+	if err := s.File.Sync(); err != nil {
+		return err
+	}
+
+	for o := range s.index {
+		if o >= offset {
+			delete(s.index, o)
+		}
+	}
+
+	s.CurrentSize = pos
+	s.NextOffset = offset
+	return nil
+}
+
 // Read считывает конкретное сообщение по оффсету с помощью thread-safe системного вызова ReadAt
 func (s *Segment) Read(offset uint64) (*topic.Message, error) {
 	pos, exists := s.index[offset]

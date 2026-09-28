@@ -2,67 +2,82 @@ package cluster
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	brokertypes "kafka-clone/server/datatypes/broker"
 	"log/slog"
 	"sort"
 
 	"kafka-clone/server/datatypes"
-	gen "kafka-clone/server/datatypes/proto-generated"
 )
 
-// DescribeTopic реализует datatypes.IController — обслуживает
-// ControlService.DescribeTopic. Может быть вызван на ЛЮБОЙ ноде кластера:
-// ответ строится из локально видимого состояния etcd (topicMeta), а адреса
-// нод берутся из членства кластера (members), которое поддерживается
-// WatchNodes независимо на каждой ноде. Специально обращаться именно к
+// Псевдонимы доменных ошибок control-plane: сами значения объявлены в пакете
+// datatypes, чтобы транспортные слои могли их распознавать без импорта cluster.
+var (
+	TopicNotFoundError              = datatypes.ErrTopicNotFound
+	TopicCredentialError            = datatypes.ErrTopicCredential
+	TopicAlreadyExistsError         = datatypes.ErrTopicAlreadyExists
+	ThisIsNotClusterControllerError = datatypes.ErrNotClusterController
+	ThereIsNotEnoughAliveNodesError = datatypes.ErrNotEnoughAliveNodes
+	RaceConditionError              = datatypes.ErrRaceCondition
+)
+
+// DescribeTopic реализует datatypes.ITopicManager. Может быть вызван на ЛЮБОЙ
+// ноде кластера: и параметры топика, и адреса нод читаются из etcd одним
+// согласованным снимком (см. cluster_view.go), поэтому обращаться именно к
 // контроллеру для чтения метаданных не требуется.
-func (n *NodeCoordinator) DescribeTopic(ctx context.Context, req *gen.DescribeTopicRequest) (*gen.DescribeTopicResponse, error) {
-	params, _, err := n.topicMeta.GetTopic(ctx, req.TopicName)
+//
+// Раньше адреса брались из watch-кэша n.members. Это давало правдоподобный
+// ответ даже когда нода уже отвалилась от кластера; теперь такая нода честно
+// вернёт ошибку чтения etcd.
+func (n *NodeCoordinator) DescribeTopic(ctx context.Context, req datatypes.DescribeTopicRequest) (datatypes.DescribeTopicResponse, error) {
+	view, err := n.readClusterView(ctx, clusterViewTTL)
 	if err != nil {
-		return nil, err
+		return datatypes.DescribeTopicResponse{}, err
+	}
+
+	var params *TopicParams
+	for i := range view.topics {
+		if view.topics[i].Name == req.TopicName {
+			params = &view.topics[i]
+			break
+		}
 	}
 	if params == nil {
-		return &gen.DescribeTopicResponse{
+		return datatypes.DescribeTopicResponse{
 			Found:     false,
-			Error:     fmt.Sprintf("topic %q not found", req.TopicName),
+			Error:     TopicNotFoundError,
 			TopicName: req.TopicName,
 		}, nil
 	}
 
-	n.membersMx.RLock()
-	members := make(map[int64]NodeState, len(n.members))
-	for id, st := range n.members {
-		members[id] = st
-	}
-	n.membersMx.RUnlock()
-
-	partitions := make([]*gen.PartitionInfo, 0, len(params.Partitions))
+	partitions := make([]datatypes.PartitionInfo, 0, len(params.Partitions))
 	for _, p := range params.Partitions {
-		replicas := make([]*gen.ReplicaInfo, 0, len(p.ReplicasNodeId))
+		replicas := make([]datatypes.ReplicaInfo, 0, len(p.ReplicasNodeId))
 		for _, rid := range p.ReplicasNodeId {
-			replicas = append(replicas, &gen.ReplicaInfo{
-				NodeId:  rid,
-				Address: members[rid].TcpAddress,
+			replicas = append(replicas, datatypes.ReplicaInfo{
+				NodeID:  rid,
+				Address: view.nodes[rid].TcpAddress,
 				InSync:  p.IsInSync(rid),
 			})
 		}
-		partitions = append(partitions, &gen.PartitionInfo{
-			PartitionId:   p.PartitionId,
-			LeaderNodeId:  p.LeaderNodeId,
-			LeaderAddress: members[p.LeaderNodeId].TcpAddress,
+		partitions = append(partitions, datatypes.PartitionInfo{
+			PartitionID:   p.PartitionId,
+			LeaderNodeID:  p.LeaderNodeId,
+			LeaderAddress: view.nodes[p.LeaderNodeId].TcpAddress,
 			Replicas:      replicas,
 		})
 	}
 
-	return &gen.DescribeTopicResponse{
+	return datatypes.DescribeTopicResponse{
 		Found:      true,
 		TopicName:  params.Name,
 		Partitions: partitions,
 	}, nil
 }
 
-// CreateTopic реализует datatypes.IController — обслуживает
-// ControlService.CreateTopic. В отличие от DescribeTopic, выполняется ТОЛЬКО
+// CreateTopic реализует datatypes.ITopicManager. В отличие от DescribeTopic,
+// выполняется ТОЛЬКО
 // на актуальном контроллере кластера (единственном, кому разрешено менять
 // параметры топиков — см. datatypes.Controller). Если запрос попал на другую
 // ноду, она честно отвечает not_controller=true с адресом контроллера, чтобы
@@ -83,58 +98,68 @@ func (n *NodeCoordinator) DescribeTopic(ctx context.Context, req *gen.DescribeTo
 //     ISR самостоятельно через существующий механизм watchTopicLoop ->
 //     applyTopicParams -> startCatchUp (для пустой партиции это происходит
 //     почти мгновенно, т.к. high watermark лидера равен 0).
-func (n *NodeCoordinator) CreateTopic(ctx context.Context, req *gen.CreateTopicRequest) (*gen.CreateTopicResponse, error) {
-	if n.broker.ReadRole() != datatypes.Controller {
-		addr := n.findControllerAddress()
-		return &gen.CreateTopicResponse{
+func (n *NodeCoordinator) CreateTopic(ctx context.Context, req datatypes.CreateTopicRequest) (datatypes.CreateTopicResponse, error) {
+	if n.broker.ReadRole() != brokertypes.Controller {
+		// Адрес контроллера — best-effort подсказка клиенту: если etcd
+		// недоступен, отдаём пустую строку, но саму причину отказа не теряем.
+		addr, addrErr := n.FindControllerAddress(ctx)
+		if addrErr != nil {
+			n.logger.Warn("не удалось определить адрес контроллера", slog.String("err", addrErr.Error()))
+		}
+		return datatypes.CreateTopicResponse{
 			Success:           false,
-			Error:             "this node is not the cluster controller",
+			Error:             ThisIsNotClusterControllerError,
 			NotController:     true,
 			ControllerAddress: addr,
 		}, nil
 	}
 
 	if req.TopicName == "" {
-		return &gen.CreateTopicResponse{Success: false, Error: "topic_name is required"}, nil
+		return datatypes.CreateTopicResponse{Success: false, Error: TopicCredentialError}, nil
 	}
-	numPartitions := int(req.NumPartitions)
+	numPartitions := req.NumPartitions
 	if numPartitions <= 0 {
-		return &gen.CreateTopicResponse{Success: false, Error: "num_partitions must be > 0"}, nil
+		return datatypes.CreateTopicResponse{Success: false, Error: TopicCredentialError}, nil
 	}
-	rf := int(req.ReplicationFactor)
+	rf := req.ReplicationFactor
 	if rf <= 0 {
 		rf = 3 // по умолчанию: 2 реплики + 1 лидер
 	}
 
 	existing, _, err := n.topicMeta.GetTopic(ctx, req.TopicName)
 	if err != nil {
-		return nil, err
+		return datatypes.CreateTopicResponse{}, err
 	}
 	if existing != nil {
-		return &gen.CreateTopicResponse{Success: false, Error: fmt.Sprintf("topic %q already exists", req.TopicName)}, nil
+		return datatypes.CreateTopicResponse{Success: false, Error: TopicAlreadyExistsError}, nil
 	}
 
-	n.membersMx.RLock()
-	aliveIDs := make([]int64, 0, len(n.members))
-	for id := range n.members {
+	// Живые ноды берём свежим чтением etcd (maxAge=0), а не из watch-кэша:
+	// назначение реплик — это запись, и промахнуться мимо уже умершей ноды
+	// здесь дороже, чем сходить в etcd лишний раз.
+	view, err := n.readClusterView(ctx, 0)
+	if err != nil {
+		return datatypes.CreateTopicResponse{}, err
+	}
+	aliveIDs := make([]int64, 0, len(view.nodes))
+	for id := range view.nodes {
 		aliveIDs = append(aliveIDs, id)
 	}
-	n.membersMx.RUnlock()
 
 	if len(aliveIDs) < rf {
-		return &gen.CreateTopicResponse{
+		return datatypes.CreateTopicResponse{
 			Success: false,
-			Error:   fmt.Sprintf("not enough alive nodes (%d) for replication factor %d", len(aliveIDs), rf),
+			Error:   errors.Join(fmt.Errorf("not enough alive nodes (%d) for replication factor %d", len(aliveIDs), rf), ThereIsNotEnoughAliveNodesError),
 		}, nil
 	}
 
-	partitionCount, leaderCount, err := n.computeNodeLoad(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// Нагрузку считаем по топикам из ТОГО ЖЕ снимка, что и список живых нод:
+	// и лишнего чтения etcd нет, и балансировка не может опираться на состав
+	// нод одной ревизии, а на раскладку партиций другой.
+	partitionCount, leaderCount := computeNodeLoadFrom(view.topics)
 
 	partitions := make([]PartitionsParams, 0, numPartitions)
-	for i := 0; i < numPartitions; i++ {
+	for i := range numPartitions {
 		// 1. Наименее загруженные ноды идут первыми (детерминированный
 		// tie-break по id, чтобы результат был воспроизводим).
 		sort.Slice(aliveIDs, func(a, b int) bool {
@@ -177,26 +202,16 @@ func (n *NodeCoordinator) CreateTopic(ctx context.Context, req *gen.CreateTopicR
 
 	ok, err := n.topicMeta.PutTopicCAS(ctx, params, 0) // expectedRev=0: ключ не должен существовать
 	if err != nil {
-		return nil, err
+		return datatypes.CreateTopicResponse{}, err
 	}
 	if !ok {
-		return &gen.CreateTopicResponse{Success: false, Error: "race condition creating topic, please retry"}, nil
+		return datatypes.CreateTopicResponse{Success: false, Error: RaceConditionError}, nil
 	}
-
+	n.invalidateClusterView()
 	slog.Info("[Controller] Топик создан",
 		slog.String("topic", req.TopicName), slog.Int("partitions", numPartitions), slog.Int("replicationFactor", rf))
-	return &gen.CreateTopicResponse{Success: true}, nil
+	return datatypes.CreateTopicResponse{Success: true}, nil
 }
 
-// findControllerAddress ищет среди известных нод ту, чья роль — Controller, и
-// возвращает её control-plane адрес (для редиректа клиента при not_controller).
-func (n *NodeCoordinator) findControllerAddress() string {
-	n.membersMx.RLock()
-	defer n.membersMx.RUnlock()
-	for _, st := range n.members {
-		if st.Role == datatypes.Controller {
-			return st.ControlAddress
-		}
-	}
-	return ""
-}
+// Чтение топологии кластера (GetClusterNodeList, GetClusterTopicsList,
+// FindControllerAddress) живёт в cluster_view.go — оно идёт напрямую в etcd.

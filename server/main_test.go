@@ -14,8 +14,9 @@ import (
 func BenchmarkHandleConnection(b *testing.B) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	server := broker.NewTCPServer(logger)
-	server.MainHandler = func(ctx *broker.TCPContext, body []byte) {
-		ctx.Close()
+	server.MainHandler = func(_ broker.CommandContext, body []byte) error {
+		_ = body
+		return nil
 	}
 
 	requestData := append([]byte{0, 0, 0, 9, 0, 0, 0, 42}, []byte("Hello")...)

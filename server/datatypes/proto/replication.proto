@@ -14,7 +14,7 @@ service ReplicationService {
 }
 enum Status{
   Ok = 0;
-  Error =1;
+  Err =1;
 
 }
 message InvalidateRequest{

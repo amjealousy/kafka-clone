@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func TestTCPContextWritePreservesProtobufBody(t *testing.T) {
+func TestTCPContextRespondPreservesProtobufBody(t *testing.T) {
 	serverConn, clientConn := net.Pipe()
 	defer serverConn.Close()
 	defer clientConn.Close()
@@ -23,13 +23,8 @@ func TestTCPContextWritePreservesProtobufBody(t *testing.T) {
 	}
 	ctx := NewTCPContext(serverConn, buf, encode.KafkaHeader{CorrelationID: 42}, func() {})
 	want := &gen.ConsumeResponseList{Responses: []*gen.ConsumeResponse{{Offset: 7, Msg: []byte("hello")}}}
-	body, err := ctx.Encode(want)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	writeErr := make(chan error, 1)
-	go func() { writeErr <- ctx.Write(body) }()
+	go func() { writeErr <- ctx.Respond(want) }()
 
 	sizeBytes := make([]byte, 4)
 	if _, err := io.ReadFull(clientConn, sizeBytes); err != nil {
@@ -52,5 +47,26 @@ func TestTCPContextWritePreservesProtobufBody(t *testing.T) {
 	}
 	if len(got.Responses) != 1 || got.Responses[0].Offset != 7 || string(got.Responses[0].Msg) != "hello" {
 		t.Fatalf("unexpected response: %v", got)
+	}
+}
+
+func TestTCPContextCloseIsIdempotent(t *testing.T) {
+	serverConn, clientConn := net.Pipe()
+	defer clientConn.Close()
+
+	buf := &PooledBuffer{
+		Body:  make([]byte, MaxBodySize),
+		Reply: make([]byte, MaxBodySize+8),
+	}
+	flushCount := 0
+	ctx := NewTCPContext(serverConn, buf, encode.KafkaHeader{}, func() {
+		flushCount++
+	})
+
+	ctx.Close()
+	ctx.Close()
+
+	if flushCount != 1 {
+		t.Fatalf("flush count = %d, want 1", flushCount)
 	}
 }

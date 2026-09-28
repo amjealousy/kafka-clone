@@ -21,6 +21,180 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Status int32
+
+const (
+	Status_Ok  Status = 0
+	Status_Err Status = 1
+)
+
+// Enum value maps for Status.
+var (
+	Status_name = map[int32]string{
+		0: "Ok",
+		1: "Err",
+	}
+	Status_value = map[string]int32{
+		"Ok":  0,
+		"Err": 1,
+	}
+)
+
+func (x Status) Enum() *Status {
+	p := new(Status)
+	*p = x
+	return p
+}
+
+func (x Status) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Status) Descriptor() protoreflect.EnumDescriptor {
+	return file_replication_proto_enumTypes[0].Descriptor()
+}
+
+func (Status) Type() protoreflect.EnumType {
+	return &file_replication_proto_enumTypes[0]
+}
+
+func (x Status) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Status.Descriptor instead.
+func (Status) EnumDescriptor() ([]byte, []int) {
+	return file_replication_proto_rawDescGZIP(), []int{0}
+}
+
+type InvalidateRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Term          uint64                 `protobuf:"varint,1,opt,name=term,proto3" json:"term,omitempty"`                                     // Текущая эпоха (терм) Лидера
+	LeaderId      int32                  `protobuf:"varint,2,opt,name=leader_id,json=leaderId,proto3" json:"leader_id,omitempty"`             // ID Лидера
+	TopicName     string                 `protobuf:"bytes,3,opt,name=topic_name,json=topicName,proto3" json:"topic_name,omitempty"`           // Имя топика
+	PartitionId   uint32                 `protobuf:"varint,4,opt,name=partition_id,json=partitionId,proto3" json:"partition_id,omitempty"`    // Номер партиции
+	TargetOffset  uint64                 `protobuf:"varint,5,opt,name=target_offset,json=targetOffset,proto3" json:"target_offset,omitempty"` // На какой оффсет Слейв должен удалить сообщение
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InvalidateRequest) Reset() {
+	*x = InvalidateRequest{}
+	mi := &file_replication_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InvalidateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InvalidateRequest) ProtoMessage() {}
+
+func (x *InvalidateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_replication_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InvalidateRequest.ProtoReflect.Descriptor instead.
+func (*InvalidateRequest) Descriptor() ([]byte, []int) {
+	return file_replication_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *InvalidateRequest) GetTerm() uint64 {
+	if x != nil {
+		return x.Term
+	}
+	return 0
+}
+
+func (x *InvalidateRequest) GetLeaderId() int32 {
+	if x != nil {
+		return x.LeaderId
+	}
+	return 0
+}
+
+func (x *InvalidateRequest) GetTopicName() string {
+	if x != nil {
+		return x.TopicName
+	}
+	return ""
+}
+
+func (x *InvalidateRequest) GetPartitionId() uint32 {
+	if x != nil {
+		return x.PartitionId
+	}
+	return 0
+}
+
+func (x *InvalidateRequest) GetTargetOffset() uint64 {
+	if x != nil {
+		return x.TargetOffset
+	}
+	return 0
+}
+
+type InvalidateAck struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        Status                 `protobuf:"varint,1,opt,name=Status,proto3,enum=datatypes.Status" json:"Status,omitempty"`
+	Message       *string                `protobuf:"bytes,2,opt,name=Message,proto3,oneof" json:"Message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InvalidateAck) Reset() {
+	*x = InvalidateAck{}
+	mi := &file_replication_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InvalidateAck) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InvalidateAck) ProtoMessage() {}
+
+func (x *InvalidateAck) ProtoReflect() protoreflect.Message {
+	mi := &file_replication_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InvalidateAck.ProtoReflect.Descriptor instead.
+func (*InvalidateAck) Descriptor() ([]byte, []int) {
+	return file_replication_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *InvalidateAck) GetStatus() Status {
+	if x != nil {
+		return x.Status
+	}
+	return Status_Ok
+}
+
+func (x *InvalidateAck) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
+}
+
 type AppendEntriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Term          uint64                 `protobuf:"varint,1,opt,name=term,proto3" json:"term,omitempty"`                                     // Текущая эпоха (терм) Лидера
@@ -36,7 +210,7 @@ type AppendEntriesRequest struct {
 
 func (x *AppendEntriesRequest) Reset() {
 	*x = AppendEntriesRequest{}
-	mi := &file_replication_proto_msgTypes[0]
+	mi := &file_replication_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +222,7 @@ func (x *AppendEntriesRequest) String() string {
 func (*AppendEntriesRequest) ProtoMessage() {}
 
 func (x *AppendEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_replication_proto_msgTypes[0]
+	mi := &file_replication_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -61,7 +235,7 @@ func (x *AppendEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppendEntriesRequest.ProtoReflect.Descriptor instead.
 func (*AppendEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_replication_proto_rawDescGZIP(), []int{0}
+	return file_replication_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AppendEntriesRequest) GetTerm() uint64 {
@@ -125,7 +299,7 @@ type AppendEntriesResponse struct {
 
 func (x *AppendEntriesResponse) Reset() {
 	*x = AppendEntriesResponse{}
-	mi := &file_replication_proto_msgTypes[1]
+	mi := &file_replication_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -137,7 +311,7 @@ func (x *AppendEntriesResponse) String() string {
 func (*AppendEntriesResponse) ProtoMessage() {}
 
 func (x *AppendEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_replication_proto_msgTypes[1]
+	mi := &file_replication_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -150,7 +324,7 @@ func (x *AppendEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppendEntriesResponse.ProtoReflect.Descriptor instead.
 func (*AppendEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_replication_proto_rawDescGZIP(), []int{1}
+	return file_replication_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AppendEntriesResponse) GetTerm() uint64 {
@@ -194,7 +368,7 @@ type FetchLogRequest struct {
 
 func (x *FetchLogRequest) Reset() {
 	*x = FetchLogRequest{}
-	mi := &file_replication_proto_msgTypes[2]
+	mi := &file_replication_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -206,7 +380,7 @@ func (x *FetchLogRequest) String() string {
 func (*FetchLogRequest) ProtoMessage() {}
 
 func (x *FetchLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_replication_proto_msgTypes[2]
+	mi := &file_replication_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,7 +393,7 @@ func (x *FetchLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FetchLogRequest.ProtoReflect.Descriptor instead.
 func (*FetchLogRequest) Descriptor() ([]byte, []int) {
-	return file_replication_proto_rawDescGZIP(), []int{2}
+	return file_replication_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *FetchLogRequest) GetTopicName() string {
@@ -262,7 +436,7 @@ type LogEntry struct {
 
 func (x *LogEntry) Reset() {
 	*x = LogEntry{}
-	mi := &file_replication_proto_msgTypes[3]
+	mi := &file_replication_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -274,7 +448,7 @@ func (x *LogEntry) String() string {
 func (*LogEntry) ProtoMessage() {}
 
 func (x *LogEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_replication_proto_msgTypes[3]
+	mi := &file_replication_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +461,7 @@ func (x *LogEntry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogEntry.ProtoReflect.Descriptor instead.
 func (*LogEntry) Descriptor() ([]byte, []int) {
-	return file_replication_proto_rawDescGZIP(), []int{3}
+	return file_replication_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *LogEntry) GetOffset() uint64 {
@@ -323,7 +497,7 @@ type FetchLogResponse struct {
 
 func (x *FetchLogResponse) Reset() {
 	*x = FetchLogResponse{}
-	mi := &file_replication_proto_msgTypes[4]
+	mi := &file_replication_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -335,7 +509,7 @@ func (x *FetchLogResponse) String() string {
 func (*FetchLogResponse) ProtoMessage() {}
 
 func (x *FetchLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_replication_proto_msgTypes[4]
+	mi := &file_replication_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -348,7 +522,7 @@ func (x *FetchLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FetchLogResponse.ProtoReflect.Descriptor instead.
 func (*FetchLogResponse) Descriptor() ([]byte, []int) {
-	return file_replication_proto_rawDescGZIP(), []int{4}
+	return file_replication_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *FetchLogResponse) GetEntries() []*LogEntry {
@@ -376,7 +550,19 @@ var File_replication_proto protoreflect.FileDescriptor
 
 const file_replication_proto_rawDesc = "" +
 	"\n" +
-	"\x11replication.proto\x12\tdatatypes\"\xe6\x01\n" +
+	"\x11replication.proto\x12\tdatatypes\"\xab\x01\n" +
+	"\x11InvalidateRequest\x12\x12\n" +
+	"\x04term\x18\x01 \x01(\x04R\x04term\x12\x1b\n" +
+	"\tleader_id\x18\x02 \x01(\x05R\bleaderId\x12\x1d\n" +
+	"\n" +
+	"topic_name\x18\x03 \x01(\tR\ttopicName\x12!\n" +
+	"\fpartition_id\x18\x04 \x01(\rR\vpartitionId\x12#\n" +
+	"\rtarget_offset\x18\x05 \x01(\x04R\ftargetOffset\"e\n" +
+	"\rInvalidateAck\x12)\n" +
+	"\x06Status\x18\x01 \x01(\x0e2\x11.datatypes.StatusR\x06Status\x12\x1d\n" +
+	"\aMessage\x18\x02 \x01(\tH\x00R\aMessage\x88\x01\x01B\n" +
+	"\n" +
+	"\b_Message\"\xe6\x01\n" +
 	"\x14AppendEntriesRequest\x12\x12\n" +
 	"\x04term\x18\x01 \x01(\x04R\x04term\x12\x1b\n" +
 	"\tleader_id\x18\x02 \x01(\x05R\bleaderId\x12\x1d\n" +
@@ -405,10 +591,14 @@ const file_replication_proto_rawDesc = "" +
 	"\x10FetchLogResponse\x12-\n" +
 	"\aentries\x18\x01 \x03(\v2\x13.datatypes.LogEntryR\aentries\x12%\n" +
 	"\x0ehigh_watermark\x18\x02 \x01(\x04R\rhighWatermark\x12\x16\n" +
-	"\x06leader\x18\x03 \x01(\bR\x06leader2\xad\x01\n" +
+	"\x06leader\x18\x03 \x01(\bR\x06leader*\x19\n" +
+	"\x06Status\x12\x06\n" +
+	"\x02Ok\x10\x00\x12\a\n" +
+	"\x03Err\x10\x012\xfd\x01\n" +
 	"\x12ReplicationService\x12R\n" +
 	"\rAppendEntries\x12\x1f.datatypes.AppendEntriesRequest\x1a .datatypes.AppendEntriesResponse\x12C\n" +
-	"\bFetchLog\x12\x1a.datatypes.FetchLogRequest\x1a\x1b.datatypes.FetchLogResponseB.Z,kafka-clone/server/datatypes/proto-generatedb\x06proto3"
+	"\bFetchLog\x12\x1a.datatypes.FetchLogRequest\x1a\x1b.datatypes.FetchLogResponse\x12N\n" +
+	"\x14InvalidateLastOffset\x12\x1c.datatypes.InvalidateRequest\x1a\x18.datatypes.InvalidateAckB.Z,kafka-clone/server/datatypes/proto-generatedb\x06proto3"
 
 var (
 	file_replication_proto_rawDescOnce sync.Once
@@ -422,25 +612,32 @@ func file_replication_proto_rawDescGZIP() []byte {
 	return file_replication_proto_rawDescData
 }
 
-var file_replication_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_replication_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_replication_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_replication_proto_goTypes = []any{
-	(*AppendEntriesRequest)(nil),  // 0: datatypes.AppendEntriesRequest
-	(*AppendEntriesResponse)(nil), // 1: datatypes.AppendEntriesResponse
-	(*FetchLogRequest)(nil),       // 2: datatypes.FetchLogRequest
-	(*LogEntry)(nil),              // 3: datatypes.LogEntry
-	(*FetchLogResponse)(nil),      // 4: datatypes.FetchLogResponse
+	(Status)(0),                   // 0: datatypes.Status
+	(*InvalidateRequest)(nil),     // 1: datatypes.InvalidateRequest
+	(*InvalidateAck)(nil),         // 2: datatypes.InvalidateAck
+	(*AppendEntriesRequest)(nil),  // 3: datatypes.AppendEntriesRequest
+	(*AppendEntriesResponse)(nil), // 4: datatypes.AppendEntriesResponse
+	(*FetchLogRequest)(nil),       // 5: datatypes.FetchLogRequest
+	(*LogEntry)(nil),              // 6: datatypes.LogEntry
+	(*FetchLogResponse)(nil),      // 7: datatypes.FetchLogResponse
 }
 var file_replication_proto_depIdxs = []int32{
-	3, // 0: datatypes.FetchLogResponse.entries:type_name -> datatypes.LogEntry
-	0, // 1: datatypes.ReplicationService.AppendEntries:input_type -> datatypes.AppendEntriesRequest
-	2, // 2: datatypes.ReplicationService.FetchLog:input_type -> datatypes.FetchLogRequest
-	1, // 3: datatypes.ReplicationService.AppendEntries:output_type -> datatypes.AppendEntriesResponse
-	4, // 4: datatypes.ReplicationService.FetchLog:output_type -> datatypes.FetchLogResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 0: datatypes.InvalidateAck.Status:type_name -> datatypes.Status
+	6, // 1: datatypes.FetchLogResponse.entries:type_name -> datatypes.LogEntry
+	3, // 2: datatypes.ReplicationService.AppendEntries:input_type -> datatypes.AppendEntriesRequest
+	5, // 3: datatypes.ReplicationService.FetchLog:input_type -> datatypes.FetchLogRequest
+	1, // 4: datatypes.ReplicationService.InvalidateLastOffset:input_type -> datatypes.InvalidateRequest
+	4, // 5: datatypes.ReplicationService.AppendEntries:output_type -> datatypes.AppendEntriesResponse
+	7, // 6: datatypes.ReplicationService.FetchLog:output_type -> datatypes.FetchLogResponse
+	2, // 7: datatypes.ReplicationService.InvalidateLastOffset:output_type -> datatypes.InvalidateAck
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_replication_proto_init() }
@@ -448,18 +645,20 @@ func file_replication_proto_init() {
 	if File_replication_proto != nil {
 		return
 	}
+	file_replication_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_replication_proto_rawDesc), len(file_replication_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   5,
+			NumEnums:      1,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_replication_proto_goTypes,
 		DependencyIndexes: file_replication_proto_depIdxs,
+		EnumInfos:         file_replication_proto_enumTypes,
 		MessageInfos:      file_replication_proto_msgTypes,
 	}.Build()
 	File_replication_proto = out.File

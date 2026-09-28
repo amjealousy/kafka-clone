@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	gen "kafka-clone/server/datatypes/proto-generated"
-	"kafka-clone/server/internal"
+	"kafka-clone/server/helper"
 	"kafka-clone/server/topic"
 	"log/slog"
 	"sync"
@@ -14,7 +14,7 @@ import (
 )
 
 type TopicProcessor struct {
-	*internal.Lifecycle
+	*helper.Lifecycle
 	id         int
 	Name       string
 	partitions map[int]*PartitionProcessor
@@ -32,7 +32,7 @@ func NewTopicProcessor(id int, name string, logger *slog.Logger, partitions []*t
 		log:        logger,
 		partitions: processors,
 
-		Lifecycle: internal.DeriveLifecycle(poolCtx),
+		Lifecycle: helper.DeriveLifecycle(poolCtx),
 	}
 	for _, partition := range partitions {
 		processors[partition.Id] = NewPartitionProcessor(tp.Context(), partition.Id, name, partition.StartOffset, logger, partition.Retention, partition.Replicas)
@@ -97,6 +97,83 @@ func (tp *TopicProcessor) ListPartitions() []int {
 	return ids
 }
 
+// replicaTarget — реплика, которой был отправлен push, вместе с уже
+// полученным для неё gRPC-клиентом.
+type replicaTarget struct {
+	id     int
+	client gen.ReplicationServiceClient
+}
+
+// invalidateTimeout — верхняя граница на откат записи по всем репликам.
+const invalidateTimeout = 3 * time.Second
+
+// invalidateReplicas рассылает InvalidateLastOffset всем репликам, которым
+// была отправлена запись targetOffset, после того как лидер не смог
+// закоммитить её локально.
+//
+// Контекст исходного produce-запроса здесь намеренно НЕ используется: откат
+// обязан быть выполнен, даже если клиент уже отвалился или ctx отменён —
+// иначе расхождение логов останется навсегда. Поэтому берём независимый
+// контекст с собственным таймаутом.
+//
+// Ждём завершения всех вызовов (wg.Wait) до возврата ошибки продюсеру: так
+// клиент получает отказ уже после того, как попытка привести кластер в
+// согласованное состояние завершена, а не параллельно с ней.
+func (tp *TopicProcessor) invalidateReplicas(
+	targets []replicaTarget,
+	partitionID int,
+	targetOffset uint64,
+	leaderID int,
+	clusterNet ClusterPeerProvider,
+) {
+	if len(targets) == 0 {
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), invalidateTimeout)
+	defer cancel()
+
+	var wg sync.WaitGroup
+	for _, target := range targets {
+		wg.Add(1)
+		go func(t replicaTarget) {
+			defer wg.Done()
+
+			req := &gen.InvalidateRequest{
+				Term:         uint64(clusterNet.GetEpoch()),
+				LeaderId:     int32(leaderID),
+				TopicName:    tp.Name,
+				PartitionId:  uint32(partitionID),
+				TargetOffset: targetOffset,
+			}
+
+			ack, err := t.client.InvalidateLastOffset(ctx, req)
+			if err != nil {
+				// Реплика недоступна — она осталась с лишней записью. Догнать
+				// её обычным push'ем уже не выйдет (будет PushRejectedGap),
+				// расхождение придётся чинить через catch-up/переназначение.
+				tp.log.Error("Failed to invalidate record on replica: log divergence",
+					"slavePeer", t.id, "topic", tp.Name, "partition", partitionID,
+					"offset", targetOffset, "error", err)
+				return
+			}
+
+			if ack.GetStatus() != gen.Status_Ok {
+				tp.log.Error("Replica rejected invalidate: log divergence",
+					"slavePeer", t.id, "topic", tp.Name, "partition", partitionID,
+					"offset", targetOffset, "message", ack.GetMessage())
+				return
+			}
+
+			tp.log.Warn("Rolled back record on replica after leader commit failure",
+				"slavePeer", t.id, "topic", tp.Name, "partition", partitionID,
+				"offset", targetOffset)
+		}(target)
+	}
+
+	wg.Wait()
+}
+
 func (tp *TopicProcessor) ReplicateAndAppend(
 	ctx context.Context,
 	partitionID int,
@@ -138,6 +215,14 @@ func (tp *TopicProcessor) ReplicateAndAppend(
 	var wg sync.WaitGroup
 	ackChan := make(chan int, len(replicas))
 
+	// pushed — реплики, которым запись реально была отправлена. Именно им
+	// придётся слать InvalidateLastOffset, если лидер не сможет закоммитить
+	// запись у себя (шаг 5). Собираем ВСЕХ, кому ушёл RPC, а не только тех,
+	// кто прислал ACK: ответ мог потеряться уже после успешной записи на
+	// реплике (таймаут/обрыв), и такая "молчаливая" реплика тоже обязана
+	// откатиться.
+	pushed := make([]replicaTarget, 0, len(replicas))
+
 	// 3. Параллельная репликация по gRPC на все НАЗНАЧЕННЫЕ реплики (и in-sync,
 	//    и ещё догоняющие лог — последние тоже принимают новые сообщения).
 	for _, replica := range replicas {
@@ -150,6 +235,8 @@ func (tp *TopicProcessor) ReplicateAndAppend(
 			tp.log.Error("Failed to get gRPC replication client", "peerID", replica.Id, "error", err)
 			continue
 		}
+
+		pushed = append(pushed, replicaTarget{id: replica.Id, client: client})
 
 		wg.Add(1)
 		go func(pid int, cl gen.ReplicationServiceClient) {
@@ -183,6 +270,7 @@ func (tp *TopicProcessor) ReplicateAndAppend(
 				// Реплика уже in-sync, но offset разошёлся (гонка/лаг сети).
 				tp.log.Warn("Replica rejected log append: offset gap", "slavePeer", pid, "matchOffset", res.MatchOffset)
 			}
+
 		}(replica.Id, client)
 	}
 
@@ -218,6 +306,11 @@ func (tp *TopicProcessor) ReplicateAndAppend(
 	// 1-в-1 с тем, что уже разослано репликам на шаге 3.
 	finalOffset, err := partProcessor.AppendEntry(targetOffset, timestamp, payload)
 	if err != nil {
+		// Реплики уже приняли запись, а у лидера её нет. Откатываем её на
+		// репликах, иначе их лог уйдёт на одну запись вперёд лога лидера и
+		// все последующие push'ы будут отклоняться как PushRejectedGap.
+		tp.invalidateReplicas(pushed, partitionID, targetOffset, leaderID, clusterNet)
+
 		return 0, fmt.Errorf("leader local commit failed: %w", err)
 	}
 

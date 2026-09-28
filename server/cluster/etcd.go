@@ -3,17 +3,21 @@ package cluster
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"kafka-clone/server/broker"
-	"kafka-clone/server/datatypes"
+	brokertypes "kafka-clone/server/datatypes/broker"
 	"kafka-clone/server/topic"
 	"log/slog"
+	"math/rand/v2"
+	"strconv"
 
 	"sync"
 
 	"strings"
 	"time"
 
+	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
@@ -75,9 +79,24 @@ type NodeState struct {
 	TcpAddress string `json:"tcp_address"`
 	// ControlAddress — gRPC-адрес control-plane API (ControlService:
 	// DescribeTopic/CreateTopic), отдельный порт от репликации и TCP.
-	ControlAddress string                `json:"control_address"`
-	StartTime      string                `json:"start_time"`
-	Role           datatypes.ClusterRole `json:"role"`
+	ControlAddress string `json:"control_address"`
+	// HttpAddress — HTTP-адрес ноды (web UI и JSON control-plane API). Именно
+	// его отдают наружу браузеру/админке: остальные три адреса — gRPC и
+	// бинарный TCP, обратиться к ним из браузера нельзя.
+	HttpAddress string                  `json:"http_address"`
+	StartTime   string                  `json:"start_time"`
+	Role        brokertypes.ClusterRole `json:"role"`
+}
+
+// NodeAddresses — набор advertised-адресов ноды, то есть тех, которые
+// публикуются в etcd и по которым к ноде обращаются остальные участники.
+// Они намеренно отделены от bind-адресов: внутри контейнера нода слушает
+// 0.0.0.0, а анонсировать обязана адрес, маршрутизируемый из кластера.
+type NodeAddresses struct {
+	Replication string // gRPC ReplicationService (AppendEntries/FetchLog)
+	TCP         string // TCP produce/consume
+	Control     string // gRPC ControlService (control-plane)
+	HTTP        string // HTTP API и web UI
 }
 type NodeDiscovery struct {
 	cli     *clientv3.Client
@@ -157,23 +176,22 @@ func (nd *NodeDiscovery) GetLeaseID() clientv3.LeaseID {
 	return nd.leaseId
 }
 
-// Start запускает выборы и отслеживание метаданных. grpcAddr — адрес
-// репликации (ReplicationService), tcpAddr — адрес для produce/consume
-// клиентов, controlAddr — адрес административного ControlService.
-func (n *NodeCoordinator) Start(grpcAddr, tcpAddr, controlAddr string) {
+// Start запускает выборы и отслеживание метаданных. addrs — advertised-адреса
+// ноды, которые публикуются в /kafka/nodes/<id> и по которым к ней обращаются
+// остальные участники кластера и админка.
+func (n *NodeCoordinator) Start(addrs NodeAddresses) {
 	// Привязываем внутренний глобальный контекст к контексту верхнего уровня (например, из main.go)
-	n.address = grpcAddr
-	n.tcpAddress = tcpAddr
-	n.controlAddress = controlAddr
+	n.addresses = addrs
 
 	n.discovery = NewNodeDiscovery(n.cli, n.logger)
 	state := NodeState{
 		ID:             n.nodeID,
-		Address:        grpcAddr,
-		TcpAddress:     tcpAddr,
-		ControlAddress: controlAddr,
-		StartTime:      time.Now().String(),
-		Role:           datatypes.Unroled, // Начинаем строго как UNROLED
+		Address:        addrs.Replication,
+		TcpAddress:     addrs.TCP,
+		ControlAddress: addrs.Control,
+		HttpAddress:    addrs.HTTP,
+		StartTime:      time.Now().Format(time.RFC3339),
+		Role:           brokertypes.Unroled, // Начинаем как UNROLED
 	}
 
 	// Регистрация привязана к глобальному контексту ноды
@@ -184,7 +202,12 @@ func (n *NodeCoordinator) Start(grpcAddr, tcpAddr, controlAddr string) {
 	}
 
 	// Все системные вотчеры работают на глобальном контексте ноды
-	go n.discovery.WatchNodes(n.ctx, n.onNodeJoin, n.onNodeLeave)
+	go n.discovery.WatchNodes(n.ctx, NodeWatchHandler{
+		OnSnapshot: n.onNodesSnapshot,
+		OnJoin:     n.onNodeJoin,
+		OnLeave:    n.onNodeLeave,
+	})
+	go n.runRebalanceWorker(n.ctx)
 	go n.watchMetadataLoop(n.ctx)
 	go n.watchTopicLoop(n.ctx)
 	go n.runControllerReconcileLoop(n.ctx)
@@ -198,7 +221,7 @@ func (n *NodeCoordinator) Start(grpcAddr, tcpAddr, controlAddr string) {
 
 // publishOwnRole обновляет роль текущей ноды, сохраняя lease регистрации.
 // Роль брокера в памяти и роль в /kafka/nodes/<id> должны изменяться вместе.
-func (n *NodeCoordinator) publishOwnRole(ctx context.Context, role datatypes.ClusterRole) {
+func (n *NodeCoordinator) publishOwnRole(ctx context.Context, role brokertypes.ClusterRole) {
 	nodeKey := fmt.Sprintf("%s%d", NodesDiscoveryPath, n.nodeID)
 	resp, err := n.cli.Get(ctx, nodeKey)
 	if err != nil || len(resp.Kvs) == 0 {
@@ -236,25 +259,32 @@ func (n *NodeCoordinator) publishOwnRole(ctx context.Context, role datatypes.Clu
 	}
 }
 
+// handleSessionLoss переводит ноду в аварийный режим. Вызывается из двух мест
+// (keepalive-горутина и ре-бутстрап WatchNodes, обнаруживший, что нашего ключа
+// в кластере больше нет), поэтому вход защищён CAS: параллельные recoveryLoop
+// перерегистрировали бы ноду наперегонки.
 func (n *NodeCoordinator) handleSessionLoss() {
+	if !n.paused.CompareAndSwap(false, true) {
+		return // Аварийный режим уже запущен
+	}
+
 	n.logger.Warn("[Coordinator] Обнаружена потеря сессии etcd! Запускаем аварийный режим.")
 
-	// ОСТАНАВЛИВАЕМ ВЫБОРЫ: Нода больше не имеет права претендовать на лидерство
+	// ОСТАНАВЛИВАЕМ ВЫБОРЫ: нода больше не имеет права претендовать на лидерство.
+	// Роль сбрасываем здесь же — брокер обязан перестать вести себя как лидер
+	// сразу, а не после успешного восстановления.
 	n.mu.Lock()
 	if n.cancelElection != nil {
 		n.cancelElection()
 	}
+	_ = n.broker.ToFollower()
 	n.mu.Unlock()
 
-	// Ставим брокер на паузу (запрещаем обработку сообщений)
-	resume := make(chan bool)
-	go n.ClusterPause(resume)
-
-	// Запускаем восстановление подключения и повторную синхронизацию данных
-	go n.recoveryLoop(resume)
+	// Запускаем восстановление подключения и повторную синхронизацию данных.
+	go n.recoveryLoop()
 }
 
-func (n *NodeCoordinator) recoveryLoop(resume chan bool) {
+func (n *NodeCoordinator) recoveryLoop() {
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
 
@@ -267,11 +297,12 @@ func (n *NodeCoordinator) recoveryLoop(resume chan bool) {
 
 			initialState := NodeState{
 				ID:             n.nodeID,
-				Address:        n.address,
-				TcpAddress:     n.tcpAddress,
-				ControlAddress: n.controlAddress,
+				Address:        n.addresses.Replication,
+				TcpAddress:     n.addresses.TCP,
+				ControlAddress: n.addresses.Control,
+				HttpAddress:    n.addresses.HTTP,
 				StartTime:      time.Now().Format(time.RFC3339),
-				Role:           datatypes.Unroled, // При восстановлении роль снова сбрасывается
+				Role:           brokertypes.Unroled, // При восстановлении роль снова сбрасывается
 			}
 
 			// Пытаемся перерегистрироваться в etcd под защитой глобального n.ctx
@@ -294,7 +325,10 @@ func (n *NodeCoordinator) recoveryLoop(resume chan bool) {
 				go n.electionLoop(n.electionCtx)
 				n.mu.Unlock()
 
-				resume <- true
+				// Снимаем аварийный режим последним действием: до этого момента
+				// нода не должна считаться полноценным участником кластера.
+				n.paused.Store(false)
+				n.logger.Info("[Coordinator] Нода возобновила работу в кластере")
 				return
 			}
 
@@ -386,7 +420,7 @@ func (n *NodeCoordinator) electionLoop(ctx context.Context) {
 			_ = json.Unmarshal(myNodeResp.Kvs[0].Value, &myNodeState)
 			myNodeModRev = myNodeResp.Kvs[0].ModRevision
 		}
-		myNodeState.Role = datatypes.Controller
+		myNodeState.Role = brokertypes.Controller
 		newMyNodeState, _ := json.Marshal(myNodeState)
 
 		var cmpNode clientv3.Cmp
@@ -466,30 +500,89 @@ func (n *NodeCoordinator) watchMetadataLoop(ctx context.Context) {
 	}
 }
 
-// WatchNodes отслеживает подключение/отключение нод кластера. onJoin/onLeave —
-// колбэки, вызываемые при появлении и исчезновении ноды соответственно.
-func (nd *NodeDiscovery) WatchNodes(ctx context.Context, onJoin func(NodeState), onLeave func(NodeState)) {
+// NodeWatchHandler — колбэки наблюдения за составом кластера.
+//
+// OnSnapshot вызывается после КАЖДОГО (ре-)бутстрапа и передаёт полный состав
+// кластера. Это не то же самое, что серия OnJoin: раньше bootstrap умел только
+// сообщать о присутствующих нодах, и те, кто выбыл за время разрыва watch'а,
+// оставались в памяти навсегда. Подписчик обязан трактовать OnSnapshot как
+// "вот весь кластер целиком", а не как набор добавлений.
+type NodeWatchHandler struct {
+	OnSnapshot func(members map[int64]NodeState)
+	OnJoin     func(NodeState)
+	OnLeave    func(NodeState)
+}
+
+// errWatchCompacted — ревизия, с которой мы наблюдали, вычищена компакцией.
+// Это не сбой связи: этот случай требует немедленного ре-бутстрапа, а не
+// выжидания по backoff.
+var errWatchCompacted = errors.New("watch revision compacted")
+
+const (
+	watchRetryInitialDelay = 500 * time.Millisecond
+	watchRetryMaxDelay     = 5 * time.Second
+)
+
+// WatchNodes отслеживает состав кластера, переживая разрывы наблюдения.
+//
+// Раньше при watchResp.Canceled функция просто делала return, и членство
+// кластера замерзало навсегда: перезапускать её было некому (единственный
+// вызов — из Start). Отмена наблюдения — штатное событие: компакция,
+// отозванный сервером watcher, ошибка авторизации.
+func (nd *NodeDiscovery) WatchNodes(ctx context.Context, handler NodeWatchHandler) {
 	slog.Info("[Discovery] Запуск отслеживания активных нод кластера...")
 
-	// ШАГ А: Запрашиваем текущее состояние (Bootstrap)
+	delay := watchRetryInitialDelay
+	for {
+		err := nd.watchNodesOnce(ctx, handler)
+		if ctx.Err() != nil {
+			slog.Info("[Discovery] Наблюдение за нодами остановлено вместе с контекстом ноды")
+			return
+		}
+
+		if errors.Is(err, errWatchCompacted) {
+			// Данные не потеряны — они в etcd; устарела только наша точка
+			// наблюдения. Пересобираем состав немедленно.
+			slog.Warn("[Discovery] Ревизия наблюдения устарела, немедленный ре-бутстрап", slog.String("err", err.Error()))
+			continue
+		}
+
+		slog.Error("[Discovery] Наблюдение за нодами прервано, перезапуск",
+			slog.String("err", errText(err)), slog.Duration("retryIn", delay))
+
+		if !sleepCtx(ctx, jitter(delay)) {
+			return
+		}
+		delay = min(delay*2, watchRetryMaxDelay)
+	}
+}
+
+// watchNodesOnce выполняет один цикл "снимок + наблюдение" и возвращается при
+// любом прерывании. Backoff сбрасывать здесь нечего: каждый успешный вход
+// начинается с полного снимка, так что пропусков между итерациями нет.
+func (nd *NodeDiscovery) watchNodesOnce(ctx context.Context, handler NodeWatchHandler) error {
+	// ШАГ А: полный текущий состав (bootstrap).
 	getResp, err := nd.cli.Get(ctx, NodesDiscoveryPath, clientv3.WithPrefix())
 	if err != nil {
-		slog.Error(fmt.Sprintf("Не удалось получить список начальных нод: %v", err))
+		return fmt.Errorf("bootstrap node list: %w", err)
 	}
 
-	slog.Info("=== ТЕКУЩИЕ АКТИВНЫЕ НОДЫ В КЛАСТЕРЕ ===")
+	snapshot := make(map[int64]NodeState, len(getResp.Kvs))
 	for _, kv := range getResp.Kvs {
-		var info NodeState
-		if err := json.Unmarshal(kv.Value, &info); err == nil {
-			slog.Info(fmt.Sprintf("Node ID: %d, Адрес: %s (Запущена в: %s)\n", info.ID, info.Address, info.StartTime))
-			if onJoin != nil {
-				onJoin(info)
-			}
+		state, ok := decodeNodeState(kv)
+		if !ok {
+			continue
 		}
+		snapshot[state.ID] = state
 	}
-	slog.Info("========================================")
 
-	// ШАГ Б: Запускаем Watch с точки остановки Get
+	slog.Info("[Discovery] Состав кластера получен", slog.Int("nodes", len(snapshot)),
+		slog.Int64("revision", getResp.Header.Revision))
+	if handler.OnSnapshot != nil {
+		handler.OnSnapshot(snapshot)
+	}
+
+	// ШАГ Б: наблюдение строго с точки остановки Get — без разрыва в событиях.
 	watchChan := nd.cli.Watch(ctx, NodesDiscoveryPath,
 		clientv3.WithPrefix(),
 		clientv3.WithPrevKV(),
@@ -497,47 +590,110 @@ func (nd *NodeDiscovery) WatchNodes(ctx context.Context, onJoin func(NodeState),
 	)
 
 	for watchResp := range watchChan {
+		// Компакцию проверяем до Canceled: она требует другой реакции.
+		if watchResp.CompactRevision != 0 {
+			return fmt.Errorf("%w to revision %d", errWatchCompacted, watchResp.CompactRevision)
+		}
+		if err := watchResp.Err(); err != nil {
+			return err
+		}
 		if watchResp.Canceled {
-			slog.Error(fmt.Sprintf("[Discovery] Наблюдение за нодами отменено: %v", watchResp.Err()))
-			return
+			return errors.New("watch canceled by etcd")
 		}
 
 		for _, ev := range watchResp.Events {
-			fullKey := string(ev.Kv.Key)
-			nodeIDStr := strings.TrimPrefix(fullKey, NodesDiscoveryPath)
+			nodeIDStr := strings.TrimPrefix(string(ev.Kv.Key), NodesDiscoveryPath)
 
 			switch ev.Type {
 			case clientv3.EventTypePut:
-				var info NodeState
-				if err := json.Unmarshal(ev.Kv.Value, &info); err != nil {
+				state, ok := decodeNodeState(ev.Kv)
+				if !ok {
 					continue
 				}
 				if ev.Kv.Version == 1 {
-					slog.Error(fmt.Sprintf("[КЛАСТЕР] >>> Нода ПОДКЛЮЧИЛАСЬ: ID=%s, Адрес=%s\n", nodeIDStr, info.Address))
+					slog.Info("[КЛАСТЕР] >>> Нода ПОДКЛЮЧИЛАСЬ",
+						slog.String("node", nodeIDStr), slog.String("addr", state.Address))
 				} else {
-					slog.Error(fmt.Sprintf("[КЛАСТЕР] ↺ Нода ОБНОВИЛА данные: ID=%s, Новый адрес=%s\n", nodeIDStr, info.Address))
+					slog.Info("[КЛАСТЕР] Нода ОБНОВИЛА данные",
+						slog.String("node", nodeIDStr), slog.String("addr", state.Address), slog.String("role", string(state.Role)))
 				}
-				if onJoin != nil {
-					onJoin(info)
+				if handler.OnJoin != nil {
+					handler.OnJoin(state)
 				}
 
 			case clientv3.EventTypeDelete:
-				slog.Error(fmt.Sprintf("[КЛАСТЕР] <<< Нода ОТКЛЮЧИЛАСЬ или УПАЛА: ID=%s\n", nodeIDStr))
-				if ev.PrevKv != nil {
-					var oldInfo NodeState
-					if err := json.Unmarshal(ev.PrevKv.Value, &oldInfo); err == nil {
-						slog.Error(fmt.Sprintf("Последний известный адрес ноды %d был: %s\n", oldInfo.ID, oldInfo.Address))
-						if onLeave != nil {
-							onLeave(oldInfo)
-						}
-					}
+				slog.Warn("[КЛАСТЕР] <<< Нода ОТКЛЮЧИЛАСЬ или УПАЛА", slog.String("node", nodeIDStr))
+				if ev.PrevKv == nil {
+					continue
+				}
+				state, ok := decodeNodeState(ev.PrevKv)
+				if !ok {
+					continue
+				}
+				if handler.OnLeave != nil {
+					handler.OnLeave(state)
 				}
 			}
 		}
 	}
+
+	// Канал закрывается, когда etcd-клиент завершил наблюдение: как правило
+	// это отмена контекста, но может быть и закрытие клиента.
+	return errors.New("watch channel closed")
 }
+
+// decodeNodeState разбирает значение ключа /kafka/nodes/<id>. Имя ключа —
+// запасной источник id: значение могло быть записано частично заполненной
+// структурой (см. electionLoop, который сериализует NodeState после неудачного
+// Unmarshal пустого ответа).
+func decodeNodeState(kv *mvccpb.KeyValue) (NodeState, bool) {
+	var state NodeState
+	if err := json.Unmarshal(kv.Value, &state); err != nil {
+		slog.Warn("[Discovery] Не удалось разобрать состояние ноды",
+			slog.String("key", string(kv.Key)), slog.String("err", err.Error()))
+		return NodeState{}, false
+	}
+	if state.ID == 0 {
+		id, err := strconv.ParseInt(strings.TrimPrefix(string(kv.Key), NodesDiscoveryPath), 10, 64)
+		if err != nil {
+			return NodeState{}, false
+		}
+		state.ID = id
+	}
+	return state, true
+}
+
+func errText(err error) string {
+	if err == nil {
+		return "<nil>"
+	}
+	return err.Error()
+}
+
+// sleepCtx ждёт d или отмену контекста. false — контекст отменён.
+func sleepCtx(ctx context.Context, d time.Duration) bool {
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
+}
+
+// jitter размазывает повторные попытки во времени: без него все ноды
+// кластера, потерявшие наблюдение из-за одной и той же компакции,
+// переподключатся синхронно и создадут пик нагрузки на etcd.
+func jitter(d time.Duration) time.Duration {
+	if d <= 0 {
+		return 0
+	}
+	return d/2 + time.Duration(rand.Int64N(int64(d)))
+}
+
 func (n *NodeCoordinator) watchTopicLoop(ctx context.Context) {
-	slog.Info("[TopicWatcher] Запуск отслеживания назначений топиков...")
+	slog.Info("[TopicWatcher] Запуск отслеживания назначений топиков")
 
 	// ШАГ А: Bootstrap — применяем уже существующие в etcd назначения,
 	// чтобы нода, стартовавшая позже, подхватила свои партиции.
@@ -578,6 +734,7 @@ func (n *NodeCoordinator) watchTopicLoop(ctx context.Context) {
 			switch ev.Type {
 			case clientv3.EventTypePut:
 				var params TopicParams
+
 				if err := json.Unmarshal(ev.Kv.Value, &params); err != nil {
 					slog.Error("[TopicWatcher] Ошибка парсинга TopicParams", slog.String("topic", topicName), slog.String("err", err.Error()))
 					continue
@@ -588,7 +745,7 @@ func (n *NodeCoordinator) watchTopicLoop(ctx context.Context) {
 
 			case clientv3.EventTypeDelete:
 				slog.Info("[TopicWatcher] Топик удалён", slog.String("topic", topicName))
-				//todo
+				n.applyTopicDelete(ctx, topicName)
 			}
 		}
 	}
@@ -597,13 +754,41 @@ func (n *NodeCoordinator) watchTopicLoop(ctx context.Context) {
 // applyTopicParams реагирует на конфигурацию топика из etcd: если данная нода
 // назначена репликой на одну из партиций, она создаёт топик/партицию локально
 // и, если ещё не является in-sync, запускает восстановление лога (catch-up).
+func (n *NodeCoordinator) applyTopicDelete(ctx context.Context, name string) {
+	if ok, _ := n.broker.FindTopicPartition(name, -1); !ok {
+		return
+	}
+	m := make(map[string]bool)
+	m[name] = true
+	entry := broker.TopicPartitionDeleteEntry{
+		TopicName:   name,
+		PartitionId: -1,
+		DelMap:      m,
+		Force:       false,
+	}
+	n.broker.DeleteTopicPartition(entry)
+	n.logger.Info("Topic delete success", slog.String("topic-name", name))
+
+}
 func (n *NodeCoordinator) applyTopicParams(ctx context.Context, params TopicParams) {
 	for _, part := range params.Partitions {
 		// Запоминаем лидера партиции (нужно и лидеру, и репликам для FetchLog).
 		n.broker.SetPartitionLeader(params.Name, int(part.PartitionId), int(part.LeaderNodeId))
 
 		if !part.ContainsNode(n.nodeID) {
-			continue // Эта нода не участвует в данной партиции
+			if _, ok := n.broker.FindTopicPartition(params.Name, part.PartitionId); ok {
+				m := make(map[string]bool)
+				m[strconv.FormatInt(part.PartitionId, 10)] = true
+				entry := broker.TopicPartitionDeleteEntry{
+					TopicName:   params.Name,
+					PartitionId: part.PartitionId,
+					DelMap:      m,
+					Force:       false,
+				}
+				n.broker.DeleteTopicPartition(entry)
+				n.logger.Info("local Partition delete success", slog.String("topic-name", params.Name))
+			}
+			continue // Эта нода не участвует в данной партиции и локально нечего менять
 		}
 
 		// Строим локальное описание партиции с полным набором реплик.

@@ -3,14 +3,14 @@ package broker
 import (
 	"context"
 	"errors"
-	"kafka-clone/server/internal"
+	"kafka-clone/server/helper"
 	"kafka-clone/server/topic"
 	"log/slog"
 	"sync"
 )
 
 type ProcessorPool struct {
-	*internal.Lifecycle
+	*helper.Lifecycle
 	wg             sync.WaitGroup //todo: use when proccessor will be async
 	mx             sync.RWMutex
 	topicProcessor map[string]int
@@ -29,7 +29,7 @@ func NewProcessorPool(ctx context.Context, logger *slog.Logger) *ProcessorPool {
 		processors:     make([]*TopicProcessor, 0),
 		log:            logger,
 		nextId:         0,
-		Lifecycle:      internal.DeriveLifecycle(ctx),
+		Lifecycle:      helper.DeriveLifecycle(ctx),
 	}
 }
 
@@ -73,16 +73,25 @@ func (pool *ProcessorPool) ListTopics() []string {
 }
 
 func (pool *ProcessorPool) RemoveTopic(topic topic.Topic) error {
+	processor, err := pool.GetTopicProcessor(topic.Name)
+	if err != nil {
+		return err
+	}
 	pool.mx.Lock()
-	defer pool.mx.Unlock()
-	var id int
-	var ok bool
-	if id, ok = pool.topicProcessor[topic.Name]; !ok {
-		return errors.New("topic does not exist")
+	pool.processors[pool.topicProcessor[topic.Name]] = nil
+	delete(pool.topicProcessor, topic.Name)
+	pool.mx.Unlock()
+
+	processor.Stop()
+
+	for partId := range processor.ListPartitions() {
+		delErr := processor.DeletePartition(partId, false)
+		if delErr != nil {
+			pool.log.Warn("Failed to delete partition", "partition", partId, "err", delErr)
+		}
 	}
 
-	pool.topicProcessor[topic.Name] = -1
-	pool.processors[id] = nil
+	pool.log.Info("Removed topic", "name", topic.Name)
 	return nil
 }
 func (pool *ProcessorPool) SendMessage(ctx context.Context, topic string, partitionId int, message []byte, clusterNet ClusterPeerProvider) error {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	grpcserver "kafka-clone/server/grpc"
+	httpserver "kafka-clone/server/http"
 	"log/slog"
 	"net"
 	"os"
@@ -19,6 +20,8 @@ import (
 	gen "kafka-clone/server/datatypes/proto-generated"
 	"kafka-clone/server/persistent/db"
 
+	"github.com/fasthttp/router"
+	"github.com/valyala/fasthttp"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 )
@@ -29,7 +32,22 @@ func main() {
 	tcpAddr := flag.String("tcp", "127.0.0.1:5090", "адрес TCP-сервера для produce/consume клиентов")
 	grpcAddr := flag.String("grpc", "127.0.0.1:6090", "адрес gRPC-сервера репликации (AppendEntries/FetchLog)")
 	controlAddr := flag.String("control", "127.0.0.1:7090", "адрес gRPC control-plane API (DescribeTopic/CreateTopic)")
+	httpAddr := flag.String("http", "127.0.0.1:8090", "адрес HTTP API и web UI")
 	etcdEndpoints := flag.String("etcd", "127.0.0.1:2379", "список endpoint'ов etcd через запятую")
+
+	// Advertise-адреса — то, что нода публикует в etcd и по чему к ней
+	// обращаются остальные. Их обязательно отделять от bind-адресов: в
+	// контейнере нода слушает 0.0.0.0, а анонсировать должна имя, которое
+	// резолвится из кластера (например broker-0.brokers.svc). Если флаг пуст,
+	// анонсируется bind-адрес — привычное поведение для локального запуска.
+	advertiseTCP := flag.String("advertise-tcp", "", "TCP-адрес, публикуемый в etcd (по умолчанию --tcp)")
+	advertiseGRPC := flag.String("advertise-grpc", "", "gRPC-адрес репликации, публикуемый в etcd (по умолчанию --grpc)")
+	advertiseControl := flag.String("advertise-control", "", "gRPC control-plane адрес, публикуемый в etcd (по умолчанию --control)")
+	advertiseHTTP := flag.String("advertise-http", "", "HTTP-адрес, публикуемый в etcd (по умолчанию --http)")
+
+	// Без CORS браузер не сможет переключиться на другую ноду при падении той,
+	// с которой загрузилась админка: разные порты — уже разные origin.
+	corsOrigins := flag.String("cors-origins", "", "разрешённые origin'ы через запятую (\"*\" — любой, пусто — CORS выключен)")
 	flag.Parse()
 	logFile, err2 := os.Create("./broker.log")
 	if err2 != nil {
@@ -73,6 +91,20 @@ func main() {
 	}
 	defer etcdClient.Close()
 
+	etcdCheckCtx, etcdCheckCancel := context.WithTimeout(rootCtx, 5*time.Second)
+	_, err = etcdClient.Get(etcdCheckCtx, cluster.StatePath)
+	etcdCheckCancel()
+
+	if err != nil {
+		logger.Error(
+			"etcd is unavailable, broker startup aborted",
+			"endpoints",
+			*etcdEndpoints,
+			"error",
+			err,
+		)
+		return
+	}
 	// 3. Создаём брокер.
 	myBroker := broker.NewBroker(int(*nodeID), dbClient, logger, rootCtx, etcdClient)
 	myBroker.SetNodeId(int(*nodeID))
@@ -106,7 +138,9 @@ func main() {
 	}()
 
 	// 5. Фоновый воркер сброса закоммиченных оффсетов.
-	go myBroker.RunOffsetCommitConsumer(rootCtx)
+	// вероятно был нужен до появления polling send commit in etcd
+	// через метод NodeCoordinator::runLocalStateReportLoop
+	//go myBroker.RunOffsetCommitConsumer(rootCtx)
 
 	// 6. Создаём координатор кластера (etcd-регистрация, выборы, watch-лупы) —
 	//    он же реализует datatypes.IController для control-plane gRPC API ниже.
@@ -133,33 +167,64 @@ func main() {
 
 	// 6.2 Запускаем координатор: регистрация в etcd (Unroled), выборы,
 	//    watch-лупы топиков/нод, авто-реконфигурация партиций.
-	coordinator.Start(*grpcAddr, *tcpAddr, *controlAddr)
+	coordinator.Start(cluster.NodeAddresses{
+		Replication: advertised(*advertiseGRPC, *grpcAddr),
+		TCP:         advertised(*advertiseTCP, *tcpAddr),
+		Control:     advertised(*advertiseControl, *controlAddr),
+		HTTP:        advertised(*advertiseHTTP, *httpAddr),
+	})
 
-	// 7. Запускаем TCP-сервер для продюсеров/консьюмеров.
+	// 7. Запускаем HTTP API: JSON produce и streaming SSE consume.
+	webRouter := router.New()
+	webAPI := httpserver.NewHttpServer(dbClient, logger, coordinator, myBroker)
+	if *corsOrigins != "" {
+		webAPI.SetAllowedOrigins(strings.Split(*corsOrigins, ","))
+	}
+	webAPI.SetupRouter(webRouter)
+	webSrv := &fasthttp.Server{
+		Handler:     webRouter.Handler,
+		Name:        "kafka-clone-http",
+		ReadTimeout: 15 * time.Second,
+		IdleTimeout: 60 * time.Second,
+	}
+	go func() {
+		logger.Info("HTTP server listening", "addr", *httpAddr)
+		if err := webSrv.ListenAndServe(*httpAddr); err != nil {
+			logger.Error("HTTP server stopped", "error", err)
+		}
+	}()
+
+	// 8. Запускаем TCP-сервер для продюсеров/консьюмеров.
 	tcp := broker.NewTCPServer(logger)
 	host, port := splitHostPort(*tcpAddr)
 	listener := broker.CreateListener(tcp, host, port)
-	tcp.MainHandler = func(ctx *broker.TCPContext, body []byte) {
-		myBroker.HandleCommand(ctx, body)
-	}
+	tcp.MainHandler = myBroker.HandleCommand
 	tcp.SetBroker(myBroker)
 	go tcp.ReadLoop(rootCtx, listener)
 
-	// 8. Ожидаем сигнала остановки.
+	// 9. Ожидаем сигнала остановки.
 	shutdownSig := make(chan os.Signal, 1)
 	signal.Notify(shutdownSig, os.Interrupt, syscall.SIGTERM)
-	logger.Info("broker is running. Press Ctrl+C to stop.", "nodeID", *nodeID, "grpc", *grpcAddr, "tcp", *tcpAddr)
+	logger.Info("broker is running. Press Ctrl+C to stop.", "nodeID", *nodeID, "grpc", *grpcAddr, "tcp", *tcpAddr, "http", *httpAddr)
 
 	sig := <-shutdownSig
 	logger.Info("received shutdown signal", "signal", sig.String())
 
-	// 9. Плавная остановка.
+	// 10. Плавная остановка.
 	rootCancel()
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer shutdownCancel()
 
 	grpcSrv.GracefulStop()
 	controlSrv.GracefulStop()
+	// Координатор живёт на собственном контексте (не на rootCtx), поэтому его
+	// фоновые циклы надо останавливать явно — иначе они переживают shutdown.
+	if err := coordinator.Close(); err != nil {
+		logger.Error("coordinator shutdown finished with error", "error", err)
+	}
+	if err := webSrv.ShutdownWithContext(shutdownCtx); err != nil {
+		logger.Error("HTTP server shutdown finished with error", "error", err)
+	}
 	if err := myBroker.Shutdown(shutdownCtx); err != nil {
 		logger.Error("broker shutdown finished with error", "error", err)
 	}
@@ -170,6 +235,15 @@ func main() {
 	}
 
 	logger.Info("broker stopped cleanly. Bye!")
+}
+
+// advertised выбирает адрес для публикации в etcd: явно заданный advertise
+// либо, если он пуст, адрес прослушивания.
+func advertised(advertise, bind string) string {
+	if advertise != "" {
+		return advertise
+	}
+	return bind
 }
 
 // splitHostPort разбивает "host:port" на составляющие для CreateListener.

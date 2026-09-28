@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"kafka-clone/server/internal"
+	"kafka-clone/server/helper"
 	"kafka-clone/server/persistent/aol"
 	"kafka-clone/server/topic"
 	"log/slog"
@@ -52,7 +52,7 @@ const (
 )
 
 type PartitionProcessor struct {
-	*internal.Lifecycle
+	*helper.Lifecycle
 	id        int
 	topicName string
 	mx        *sync.RWMutex
@@ -90,7 +90,7 @@ func NewPartitionProcessor(ctx context.Context, id int, topicName string, offset
 		cond:           sync.NewCond(mx), // Инициализируем Cond, привязанный к нашему RWMutex
 		topicName:      topicName,
 		closedSegments: make([]*aol.Segment, 0),
-		Lifecycle:      internal.DeriveLifecycle(ctx),
+		Lifecycle:      helper.DeriveLifecycle(ctx),
 		ttl:            ttl,
 		log:            log,
 		maxSegmentSize: 10 * 1024 * 1024, // 10 МБ лимит на один файл-сегмент
@@ -286,6 +286,17 @@ func (p *PartitionProcessor) readFrom(ctx context.Context, startOffset uint64, m
 
 func (p *PartitionProcessor) getStream(ctx context.Context, startOffset uint64) <-chan topic.Message {
 	out := make(chan topic.Message, 100)
+	// cond.Wait сам не умеет ждать context. При отмене запроса будим все
+	// ожидающие stream-горутины; каждая из них повторно проверит свой context.
+	go func() {
+		select {
+		case <-ctx.Done():
+		case <-p.Done():
+		}
+		p.mx.Lock()
+		p.cond.Broadcast()
+		p.mx.Unlock()
+	}()
 
 	go func() {
 		defer close(out)
@@ -473,6 +484,67 @@ func (p *PartitionProcessor) AppendEntry(offset uint64, timestamp int64, payload
 		return p.nextOffset, err
 	}
 	return offset, nil
+}
+
+// ErrInvalidateNotLast возвращается, если запрошенный к откату оффсет — не
+// последняя запись лога. Откатывать запись "из середины" нельзя: это оставило
+// бы дыру в append-only логе.
+var ErrInvalidateNotLast = errors.New("cannot invalidate: offset is not the last record in the log")
+
+// InvalidateOffset откатывает последнюю запись лога с оффсетом targetOffset.
+//
+// Вызывается на реплике по команде лидера (InvalidateLastOffset), когда лидер
+// успешно разослал запись, но НЕ смог закоммитить её у себя локально. Без
+// такого отката лог реплики уехал бы на одну запись вперёд лога лидера, и все
+// последующие push'ы отклонялись бы как PushRejectedGap.
+//
+// Идемпотентна: если записи с таким оффсетом у нас нет (push не дошёл или
+// откат уже выполнен), возвращает nil.
+//
+// Вся проверка + физический откат выполняются под одним p.mx.Lock — тем же,
+// которым защищены AppendEntry/TryApplyPush. Поэтому между решением "эта
+// запись последняя" и обрезанием файла никто не может дописать в лог.
+func (p *PartitionProcessor) InvalidateOffset(targetOffset uint64) error {
+	p.mx.Lock()
+	defer p.mx.Unlock()
+
+	if p.state != PartitionActive {
+		return ErrPartitionStopped
+	}
+
+	// Записи ещё/уже нет — откатывать нечего (идемпотентность).
+	if p.nextOffset <= targetOffset {
+		return nil
+	}
+
+	// Откатывать разрешено ТОЛЬКО последнюю запись.
+	if p.nextOffset != targetOffset+1 {
+		return fmt.Errorf("%w: nextOffset=%d, targetOffset=%d", ErrInvalidateNotLast, p.nextOffset, targetOffset)
+	}
+
+	if p.activeSegment == nil {
+		return errors.New("cannot invalidate: no active segment")
+	}
+
+	// Запись всегда должна лежать в активном сегменте: ротация происходит
+	// только в момент следующего Append, а следующего Append не было (иначе
+	// nextOffset был бы больше). Если это не так — не трогаем закрытые
+	// сегменты, а честно сообщаем об ошибке.
+	if targetOffset < p.activeSegment.BaseOffset {
+		return fmt.Errorf("cannot invalidate offset %d: record belongs to a closed segment", targetOffset)
+	}
+
+	if err := p.activeSegment.TruncateFrom(targetOffset); err != nil {
+		return err
+	}
+
+	p.nextOffset = targetOffset
+	// Будим стримы: те, кто уже вычитал откаченный оффсет, снова уснут на
+	// cond.Wait до появления настоящей записи с этим оффсетом.
+	p.cond.Broadcast()
+
+	p.log.Warn("log record invalidated by leader", "offset", targetOffset)
+	return nil
 }
 
 // PushOutcome — результат попытки применить push-репликацию (AppendEntries)

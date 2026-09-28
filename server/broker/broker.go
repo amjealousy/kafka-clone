@@ -5,10 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"kafka-clone/server/datatypes"
+	"kafka-clone/server/datatypes/broker"
+	"strconv"
 
+	web "kafka-clone/server/datatypes/broker/dto"
 	"kafka-clone/server/datatypes/encode"
 	gen "kafka-clone/server/datatypes/proto-generated"
-	"kafka-clone/server/internal"
+	"kafka-clone/server/helper"
 	"kafka-clone/server/persistent/db"
 	"kafka-clone/server/topic"
 	"log/slog"
@@ -36,7 +39,7 @@ type OffsetCommit struct {
 }
 
 type Broker struct {
-	*internal.Lifecycle
+	*helper.Lifecycle
 	id       int
 	config   *TopicsConfig
 	clientDB *db.MongoClient
@@ -51,11 +54,12 @@ type Broker struct {
 	leaderModecancel   context.CancelFunc
 	followerCtx        context.Context
 	followerModecancel context.CancelFunc
-	epoch              atomic.Int64
-	role               datatypes.ClusterRole
-	peersMx            *sync.RWMutex
-	peers              map[int]*datatypes.Peer
-	etcdclient         *clientv3.Client
+
+	epoch      atomic.Int64
+	role       broker.ClusterRole
+	peersMx    *sync.RWMutex
+	peers      map[int]*datatypes.Peer
+	etcdclient *clientv3.Client
 
 	offsetCommitChan chan OffsetCommit
 	// partitionLeader хранит id ноды-лидера для каждой (topic, partition),
@@ -63,6 +67,8 @@ type Broker struct {
 	partitionLeaderMx sync.RWMutex
 	partitionLeader   map[string]int // ключ "topic/partition" -> leaderNodeID
 }
+
+var _ broker.APIBroker = (*Broker)(nil)
 
 // partitionLeaderKey формирует ключ для карты partitionLeader.
 func partitionLeaderKey(topicName string, partitionID int) string {
@@ -74,6 +80,11 @@ func (b *Broker) SetPartitionLeader(topicName string, partitionID int, leaderNod
 	b.partitionLeaderMx.Lock()
 	defer b.partitionLeaderMx.Unlock()
 	b.partitionLeader[partitionLeaderKey(topicName, partitionID)] = leaderNodeID
+}
+func (b *Broker) DeletePartitionLeader(topicName string, partitionID int) {
+	b.partitionLeaderMx.Lock()
+	defer b.partitionLeaderMx.Unlock()
+	delete(b.partitionLeader, partitionLeaderKey(topicName, partitionID))
 }
 
 // GetPartitionLeader возвращает id лидера партиции и флаг наличия записи.
@@ -108,7 +119,7 @@ func NewBroker(id int, dbClient *db.MongoClient, logger *slog.Logger, node conte
 		},
 		clientDB:           dbClient,
 		log:                logger,
-		Lifecycle:          internal.DeriveLifecycle(node),
+		Lifecycle:          helper.DeriveLifecycle(node),
 		peersMx:            &sync.RWMutex{},
 		peers:              make(map[int]*datatypes.Peer, 0),
 		etcdclient:         client,
@@ -176,11 +187,46 @@ func (b *Broker) Shutdown(ctx context.Context) error {
 	b.log.Info("graceful shutdown successfully completed")
 	return nil
 }
-func (b *Broker) HandleCommand(ctx *TCPContext, body []byte) error {
-	defer ctx.Close()
-	b.log.Info("handling command", "command", ctx.Header.CommandType)
+func (b *Broker) Produce(ctx CommandContext, request web.ProduceRequest) error {
+	b.log.Info("handling web request", "command", ctx.CommandType())
+	if err := request.Validate(); err != nil {
+		return err
+	}
+	payload := &gen.ProducePayload{
+		TopicName:   request.TopicName,
+		PartitionId: request.PartitionID,
+		Key:         request.Key,
+		Msg:         request.Msg,
+	}
+	b.log.Debug("Kafka body", slog.Any("payload", payload))
+	return b.producerHandler(ctx, payload)
+}
+func (b *Broker) Consume(ctx CommandContext, request web.ConsumeRequest) error {
+	b.log.Info("handling web request", "command", ctx.CommandType())
+	if err := request.Validate(); err != nil {
+		return err
+	}
+	payload := &gen.ConsumePayload{
+		TopicName:   request.TopicName,
+		PartitionID: request.PartitionID,
+	}
+	if request.StartOffset != nil {
+		payload.StartPosition = &gen.ConsumePayload_StartOffset{StartOffset: *request.StartOffset}
+	} else {
+		payload.StartPosition = &gen.ConsumePayload_FromBeginning{FromBeginning: request.FromBeginning}
+	}
+	if request.FinOffset != nil {
+		payload.FinPosition = &gen.ConsumePayload_FinOffset{FinOffset: *request.FinOffset}
+	} else {
+		payload.FinPosition = &gen.ConsumePayload_TillEnd{TillEnd: request.TillEnd}
+	}
+	return b.consumerHandler(ctx, payload)
+}
 
-	switch ctx.Header.CommandType {
+func (b *Broker) HandleCommand(ctx CommandContext, body []byte) error {
+	b.log.Info("handling command", "command", ctx.CommandType())
+
+	switch ctx.CommandType() {
 	case encode.Topic:
 		// Управление топиками (создание/описание) больше НЕ обслуживается по
 		// TCP-протоколу — эта административная логика перенесена в отдельный
@@ -189,21 +235,21 @@ func (b *Broker) HandleCommand(ctx *TCPContext, body []byte) error {
 		return b.topicHandler(ctx)
 	case encode.Produce:
 		payload := &gen.ProducePayload{}
-		if err := encode.DecodeKafkaBody(body, payload); err != nil {
+		if err := ctx.Decode(body, payload); err != nil {
 			return err
-		} else {
-			b.log.Debug("Kafka body", slog.Any("payload", payload))
-			return b.producerHandler(ctx, payload)
 		}
+		b.log.Debug("Kafka body", slog.Any("payload", payload))
+		return b.producerHandler(ctx, payload)
+
 	case encode.Consume:
 		payload := &gen.ConsumePayload{}
-		if err := encode.DecodeKafkaBody(body, payload); err != nil {
+		if err := ctx.Decode(body, payload); err != nil {
 			return err
-		} else {
-			b.log.Debug("Kafka body", slog.Any("payload", payload))
-			return b.consumerHandler(ctx, payload)
-
 		}
+
+		b.log.Debug("Kafka body", slog.Any("payload", payload))
+		return b.consumerHandler(ctx, payload)
+
 	default:
 		return errors.New("unknown command")
 	}
@@ -232,19 +278,17 @@ func (b *Broker) InitConfig(ctx context.Context) error {
 	return nil
 }
 
-func (b *Broker) producerHandler(tctx *TCPContext, body *gen.ProducePayload) error {
+func (b *Broker) producerHandler(ctx CommandContext, body *gen.ProducePayload) error {
 	if body.TopicName == "" {
 		b.log.Error("topic name is empty")
 		s := "topic name is empty"
-		response := gen.ProduceResponse{Status: gen.KafkaStatus_Error,
-			StatusMessage: &s}
-		encode, err2 := tctx.Encode(&response)
-		if err2 != nil {
-			return err2
+		response := gen.ProduceResponse{
+			Status:        gen.KafkaStatus_Error,
+			StatusMessage: &s,
 		}
-		err := tctx.Write(encode)
+		err := ctx.Respond(&response)
 		if err != nil {
-			b.log.Error("failed to write to topic", "topic", tctx.Header.CommandType, "error", err)
+			b.log.Error("failed to write produce response", "error", err)
 			return err
 		}
 		return nil
@@ -253,33 +297,25 @@ func (b *Broker) producerHandler(tctx *TCPContext, body *gen.ProducePayload) err
 
 	partitionID := int(body.PartitionId)
 
-	// Писать разрешено ТОЛЬКО лидеру партиции. Клиент должен был узнать адрес
-	// лидера заранее через ControlService.DescribeTopic; если он всё же
-	// постучался не туда (устаревшие метаданные, гонка после failover) —
-	// честно отказываем, а не пишем данные не туда, куда рассчитывает клиент.
+	/* Писать разрешено ТОЛЬКО лидеру партиции. Клиент должен был узнать адрес
+	/ лидера заранее через ControlService.DescribeTopic; если он всё же
+	/ постучался не туда (устаревшие метаданные, гонка после failover) —
+	/ честно отказываем, а не пишем данные не туда, куда рассчитывает клиент.
+	*/
 	if !b.IsPartitionLeader(body.TopicName, partitionID) {
 		b.log.Warn("rejected produce: not partition leader", "topic", body.TopicName, "partition", partitionID)
 		s := fmt.Sprintf("node is not the leader for %s/%d; call ControlService.DescribeTopic to find the leader",
 			body.TopicName, partitionID)
 		response := gen.ProduceResponse{Status: gen.KafkaStatus_Error, StatusMessage: &s}
-		encode, err2 := tctx.Encode(&response)
-		if err2 != nil {
-			return err2
-		}
-		return tctx.Write(encode)
+		return ctx.Respond(&response)
 	}
 
-	if err := b.pool.SendMessage(b.Context(), body.TopicName, partitionID, body.Msg, b); err != nil {
+	if err := b.pool.SendMessage(ctx.Context(), body.TopicName, partitionID, body.Msg, b); err != nil {
 		return err
 	}
 	response := gen.ProduceResponse{Status: gen.KafkaStatus_Accepted,
 		StatusMessage: nil}
-	encode, err2 := tctx.Encode(&response)
-	if err2 != nil {
-		return err2
-	}
-	err := tctx.Write(encode)
-	return err
+	return ctx.Respond(&response)
 
 }
 
@@ -288,16 +324,12 @@ func (b *Broker) producerHandler(tctx *TCPContext, body *gen.ProducePayload) err
 // (ControlService, см. cluster.NodeCoordinator.CreateTopic/DescribeTopic).
 // TCP-обработчик оставлен только для того, чтобы клиенты со старым протоколом
 // получили понятный ответ, куда обращаться дальше, вместо тишины/зависания.
-func (b *Broker) topicHandler(tctx *TCPContext) error {
+func (b *Broker) topicHandler(ctx CommandContext) error {
 	response := gen.TopicResponse{
 		Status: "topic management has moved to the ControlService gRPC control-plane API " +
 			"(DescribeTopic/CreateTopic); this TCP command is no longer supported",
 	}
-	encode, err := tctx.Encode(&response)
-	if err != nil {
-		return err
-	}
-	return tctx.Write(encode)
+	return ctx.Respond(&response)
 }
 
 // IsPartitionLeader сообщает, является ли эта нода лидером указанной
@@ -323,7 +355,7 @@ func (b *Broker) IsPartitionInSync(topicName string, partitionID int) bool {
 	return pp.SyncState() == StateInSync
 }
 
-func (b *Broker) consumerHandler(tctx *TCPContext, body *gen.ConsumePayload) error {
+func (b *Broker) consumerHandler(ctx CommandContext, body *gen.ConsumePayload) error {
 	if body.TopicName == "" {
 		return errors.New("topic name is empty")
 	}
@@ -340,11 +372,7 @@ func (b *Broker) consumerHandler(tctx *TCPContext, body *gen.ConsumePayload) err
 		errMsg := fmt.Sprintf("node is not an in-sync replica for %s/%d; call ControlService.DescribeTopic to find an in-sync node",
 			body.TopicName, partitionID)
 		responseList := &gen.ConsumeResponseList{Error: &errMsg}
-		encode, err := tctx.Encode(responseList)
-		if err != nil {
-			return err
-		}
-		return tctx.Write(encode)
+		return ctx.Respond(responseList)
 	}
 
 	var start, fin topic.Offset
@@ -361,7 +389,7 @@ func (b *Broker) consumerHandler(tctx *TCPContext, body *gen.ConsumePayload) err
 		fin = topic.Offset{Tag: topic.TillEnd}
 	}
 
-	err, arrMsg, streamC := b.pool.ReadMessages(b.Context(), body.TopicName, partitionID, start, fin)
+	err, arrMsg, streamC := b.pool.ReadMessages(ctx.Context(), body.TopicName, partitionID, start, fin)
 	if err != nil {
 		return err
 	}
@@ -377,14 +405,9 @@ func (b *Broker) consumerHandler(tctx *TCPContext, body *gen.ConsumePayload) err
 			}
 			responseList.Responses = append(responseList.Responses, unpackedMsg)
 		}
-		encode, err := tctx.Encode(responseList)
+		err = ctx.Respond(responseList)
 		if err != nil {
-			b.log.Error("Failed to marshal via Append", "error", err)
-			return err
-		}
-		err = tctx.Write(encode)
-		if err != nil {
-			b.log.Error("Failed to write via Append", "error", err)
+			b.log.Error("Failed to respond via Append", "error", err)
 			return err
 		}
 	}
@@ -393,6 +416,8 @@ func (b *Broker) consumerHandler(tctx *TCPContext, body *gen.ConsumePayload) err
 		b.log.Info("Client entered live-streaming log tailing mode", "topic", body.TopicName, "fromOffset", body.GetStartOffset())
 		for {
 			select {
+			case <-ctx.Context().Done():
+				return ctx.Context().Err()
 			case <-b.Done(): // Если сработал Graceful Shutdown брокера,  закрываем сетевую сессию
 				return nil
 			case msg, ok := <-streamC:
@@ -410,15 +435,9 @@ func (b *Broker) consumerHandler(tctx *TCPContext, body *gen.ConsumePayload) err
 					},
 				}
 
-				encode, err := tctx.Encode(responseList)
+				err := ctx.Respond(responseList)
 				if err != nil {
-					b.log.Error("Failed to marshal live stream message via Protobuf", "error", err)
-					return err
-				}
-
-				err = tctx.Write(encode)
-				if err != nil {
-					// Если у клиента оборвалась сеть, tctx.Write вернет ошибку.
+					// Если у клиента оборвалась сеть, Respond вернет ошибку.
 					// Мы выходим из обработчика горутины, канал streamChan закроется автоматически
 					b.log.Warn("Live stream consumer disconnected unexpectedly", "error", err)
 					return err
@@ -458,16 +477,119 @@ func (b *Broker) ReplicationLogHandler(ctx context.Context, req *gen.AppendEntri
 	}
 }
 
+// invalidateAckErr собирает отрицательный ответ на InvalidateLastOffset.
+func invalidateAckErr(msg string) *gen.InvalidateAck {
+	return &gen.InvalidateAck{Status: gen.Status_Err, Message: &msg}
+}
+
+// InvalidateLogHandler обрабатывает команду лидера откатить последнюю запись
+// лога (RPC InvalidateLastOffset). Вызывается на реплике, когда лидер разослал
+// запись, получил кворум ACK'ов, но не смог закоммитить её локально — в этом
+// случае запись обязана исчезнуть и у реплик, иначе их логи уйдут вперёд лога
+// лидера и все последующие push'ы будут отклоняться как PushRejectedGap.
+//
+// Ошибка не возвращается на уровне gRPC: результат передаётся через
+// InvalidateAck.Status, чтобы лидер мог отличить "реплика откатила" от
+// "реплика не смогла" и залогировать расхождение.
+func (b *Broker) InvalidateLogHandler(ctx context.Context, req *gen.InvalidateRequest) (*gen.InvalidateAck, error) {
+	tp, err := b.pool.GetTopicProcessor(req.TopicName)
+	if err != nil {
+		return invalidateAckErr(fmt.Sprintf("topic %q not found: %v", req.TopicName, err)), nil
+	}
+
+	err, partProcessor := tp.GetPartition(int(req.PartitionId))
+	if err != nil {
+		return invalidateAckErr(fmt.Sprintf("partition %d not found: %v", req.PartitionId, err)), nil
+	}
+
+	if err := partProcessor.InvalidateOffset(req.TargetOffset); err != nil {
+		b.log.Error("failed to invalidate log record",
+			"topic", req.TopicName, "partition", req.PartitionId,
+			"offset", req.TargetOffset, "leader", req.LeaderId, "error", err)
+		return invalidateAckErr(err.Error()), nil
+	}
+
+	b.log.Info("log record invalidated on leader demand",
+		"topic", req.TopicName, "partition", req.PartitionId,
+		"offset", req.TargetOffset, "leader", req.LeaderId)
+
+	return &gen.InvalidateAck{Status: gen.Status_Ok}, nil
+}
+
+func (b *Broker) FindTopicPartition(topic string, partId int64) (bool, bool) {
+	tp, err := b.pool.GetTopicProcessor(topic)
+	if err != nil {
+		return false, false
+	}
+	err, _ = tp.GetPartition(int(partId))
+	if err != nil {
+		return true, false
+	}
+	return true, true
+}
+
+type TopicPartitionDeleteEntry struct {
+	TopicName   string
+	PartitionId int64
+	DelMap      map[string]bool
+	Force       bool
+}
+
+func (b *Broker) DeleteTopicPartition(entry TopicPartitionDeleteEntry) error {
+
+	if entry.DelMap != nil {
+		if entry.DelMap[entry.TopicName] {
+			t := topic.Topic{Name: entry.TopicName}
+			processor, prErr := b.pool.GetTopicProcessor(entry.TopicName)
+			if prErr != nil {
+				return prErr
+			}
+			for p := range processor.ListPartitions() {
+				id, ok := b.GetPartitionLeader(entry.TopicName, p)
+				if ok {
+					if b.GetNodeId() == id {
+						b.DeletePartitionLeader(entry.TopicName, p)
+					}
+				}
+			}
+			err := b.pool.RemoveTopic(t)
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+		if entry.DelMap[strconv.FormatInt(entry.PartitionId, 10)] {
+			tp, err := b.pool.GetTopicProcessor(entry.TopicName)
+			if err != nil {
+				return err
+			}
+			err = tp.DeletePartition(int(entry.PartitionId), entry.Force)
+			if err != nil {
+				return err
+			}
+			id, ok := b.GetPartitionLeader(entry.TopicName, int(entry.PartitionId))
+			if ok {
+				if b.GetNodeId() == id {
+					b.DeletePartitionLeader(entry.TopicName, int(entry.PartitionId))
+				}
+			}
+
+		}
+	}
+	return errors.New("empty delete map")
+
+}
+
 // FetchLogHandler отдаёт отстающей реплике пакет записей лога начиная с
 // запрошенного оффсета. Вызывается на ноде-источнике (лидере партиции).
 func (b *Broker) FetchLogHandler(ctx context.Context, req *gen.FetchLogRequest) (*gen.FetchLogResponse, error) {
 	tp, err := b.pool.GetTopicProcessor(req.TopicName)
 	if err != nil {
-		return &gen.FetchLogResponse{Leader: b.role == datatypes.Controller}, nil
+		return &gen.FetchLogResponse{Leader: b.role == broker.Controller}, nil
 	}
 	err, partProcessor := tp.GetPartition(int(req.PartitionId))
 	if err != nil {
-		return &gen.FetchLogResponse{Leader: b.role == datatypes.Controller}, nil
+		return &gen.FetchLogResponse{Leader: b.role == broker.Controller}, nil
 	}
 
 	msgs, hw, readErr := partProcessor.ReadBatch(req.FromOffset, int(req.MaxMessages))
@@ -487,7 +609,7 @@ func (b *Broker) FetchLogHandler(ctx context.Context, req *gen.FetchLogRequest) 
 	return &gen.FetchLogResponse{
 		Entries:       entries,
 		HighWatermark: hw,
-		Leader:        b.role == datatypes.Controller,
+		Leader:        b.role == broker.Controller,
 	}, nil
 }
 
@@ -513,7 +635,7 @@ func (b *Broker) ToController() error {
 	b.followerModecancel()
 
 	b.leaderctx, b.leaderModecancel = context.WithCancel(context.Background())
-	b.role = datatypes.Controller
+	b.role = broker.Controller
 	return nil
 }
 func (b *Broker) ToFollower() error {
@@ -522,10 +644,10 @@ func (b *Broker) ToFollower() error {
 
 	b.leaderModecancel()
 	b.followerCtx, b.followerModecancel = context.WithCancel(context.Background())
-	b.role = datatypes.Follower
+	b.role = broker.Follower
 	return nil
 }
-func (b *Broker) ReadRole() datatypes.ClusterRole {
+func (b *Broker) ReadRole() broker.ClusterRole {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	return b.role

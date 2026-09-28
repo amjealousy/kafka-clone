@@ -1,8 +1,12 @@
 package cluster
 
 import (
+	"cmp"
 	"context"
+	"kafka-clone/server/datatypes/broker"
 	"log/slog"
+	"maps"
+	"slices"
 	"sort"
 	"time"
 
@@ -12,6 +16,63 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+// onNodesSnapshot применяет полный состав кластера, полученный при
+// (ре-)бутстрапе наблюдения.
+//
+// Ключевой момент — обработка ИСЧЕЗНУВШИХ нод. Пока наблюдение было разорвано,
+// события об их удалении прошли мимо нас; если просто применить снимок как
+// набор onNodeJoin, они останутся в n.members навсегда, и контроллер будет
+// продолжать назначать на них партиции. Поэтому считаем разницу.
+func (n *NodeCoordinator) onNodesSnapshot(snapshot map[int64]NodeState) {
+	n.membersMx.RLock()
+	previous := maps.Clone(n.members)
+	n.membersMx.RUnlock()
+
+	left, joined := diffMembers(previous, snapshot)
+
+	for _, state := range left {
+		n.onNodeLeave(state)
+	}
+	for _, state := range joined {
+		n.onNodeJoin(state)
+	}
+
+	if len(left) > 0 || len(joined) > 0 {
+		n.logger.Info("[Discovery] Состав кластера пересобран",
+			slog.Int("left", len(left)), slog.Int("joined", len(joined)), slog.Int("total", len(snapshot)))
+	}
+
+	// Нас самих нет в составе кластера: аренда истекла, пока мы не смотрели.
+	// Это не "ушёл кто-то другой" — ребалансировать кластер от своего имени мы
+	// права не имеем, нужно восстанавливать собственную регистрацию.
+	if _, present := snapshot[n.nodeID]; !present {
+		n.logger.Warn("[Discovery] Нода отсутствует в собственном снимке кластера — аварийное восстановление")
+		n.handleSessionLoss()
+	}
+}
+
+// diffMembers возвращает выбывшие и появившиеся/изменившиеся ноды.
+// NodeState сравним целиком, поэтому смена роли, адресов или перерегистрация
+// с новым StartTime тоже попадают в joined.
+func diffMembers(previous, current map[int64]NodeState) (left, joined []NodeState) {
+	for id, old := range previous {
+		if _, still := current[id]; !still {
+			left = append(left, old)
+		}
+	}
+	for id, state := range current {
+		if old, existed := previous[id]; !existed || old != state {
+			joined = append(joined, state)
+		}
+	}
+
+	// Детерминированный порядок: иначе реконфигурация партиций на разных
+	// прогонах выбирает разные ноды, и воспроизвести баг невозможно.
+	slices.SortFunc(left, func(a, b NodeState) int { return cmp.Compare(a.ID, b.ID) })
+	slices.SortFunc(joined, func(a, b NodeState) int { return cmp.Compare(a.ID, b.ID) })
+	return left, joined
+}
 
 // onNodeJoin вызывается при появлении/обновлении ноды в кластере. Помимо
 // учёта членства, устанавливает gRPC-соединение для репликации (кроме себя).
@@ -59,14 +120,46 @@ func (n *NodeCoordinator) onNodeLeave(state NodeState) {
 	n.broker.RemovePeer(int(state.ID))
 
 	// Реагировать на топологию кластера имеет право только контроллер.
-	if n.broker.ReadRole() != datatypes.Controller {
+	if n.broker.ReadRole() != broker.Controller {
 		return
 	}
 
-	slog.Warn("[Controller] Обнаружено выбытие ноды, запускаем реконфигурацию партиций",
+	slog.Warn("[Controller] Обнаружено выбытие ноды, ставим в очередь реконфигурацию партиций",
 		slog.Int64("deadNode", state.ID))
 
-	go n.rebalanceAfterNodeLoss(state.ID)
+	n.enqueueRebalance(state.ID)
+}
+
+// enqueueRebalance ставит выбывшую ноду в очередь реконфигурации.
+//
+// Раньше здесь была горутина на каждое выбытие. После ре-бутстрапа наблюдения
+// "уходят" сразу несколько нод, и параллельные rebalanceAfterNodeLoss начали бы
+// наперегонки переписывать одни и те же ключи топиков, проигрывая CAS друг
+// другу. Отправка неблокирующая: наблюдение за кластером важнее, а пропущенное
+// переназначение всё равно подхватит runControllerReconcileLoop.
+func (n *NodeCoordinator) enqueueRebalance(deadNodeID int64) {
+	select {
+	case n.rebalanceCh <- deadNodeID:
+	default:
+		n.logger.Warn("[Controller] Очередь реконфигурации переполнена, полагаемся на reconcile-цикл",
+			slog.Int64("deadNode", deadNodeID))
+	}
+}
+
+// runRebalanceWorker последовательно обрабатывает очередь выбывших нод.
+func (n *NodeCoordinator) runRebalanceWorker(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case deadNodeID := <-n.rebalanceCh:
+			// Роль могла смениться, пока задача ждала в очереди.
+			if n.broker.ReadRole() != broker.Controller {
+				continue
+			}
+			n.rebalanceAfterNodeLoss(deadNodeID)
+		}
+	}
 }
 
 // rebalanceAfterNodeLoss просматривает все топики и для каждой партиции, где
@@ -153,7 +246,7 @@ func (n *NodeCoordinator) rebalanceAfterNodeLoss(deadNodeID int64) {
 // runControllerReconcileLoop периодически проверяет, что у каждой партиции
 // достаточно назначенных реплик (>= desiredRF). Работает эффективно только
 // когда данная нода является контроллером; иначе просто ждёт. Это покрывает
-// сценарий "в топике появилась новая партиция" — контроллер до-назначает на
+// сценарий "в топике появилась новая партиция" — контроллер доназначает на
 // неё свободные Unroled-ноды.
 func (n *NodeCoordinator) runControllerReconcileLoop(ctx context.Context) {
 	ticker := time.NewTicker(5 * time.Second)
@@ -164,7 +257,7 @@ func (n *NodeCoordinator) runControllerReconcileLoop(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			if n.broker.ReadRole() != datatypes.Controller {
+			if n.broker.ReadRole() != broker.Controller {
 				continue
 			}
 			n.reconcileReplication(ctx)
@@ -220,6 +313,14 @@ func (n *NodeCoordinator) computeNodeLoad(ctx context.Context) (partitionCount m
 	if err != nil {
 		return nil, nil, err
 	}
+	partitionCount, leaderCount = computeNodeLoadFrom(topics)
+	return partitionCount, leaderCount, nil
+}
+
+// computeNodeLoadFrom — та же арифметика поверх уже прочитанного списка
+// топиков. Нужна, чтобы CreateTopic мог посчитать нагрузку по снимку кластера
+// (cluster_view) и не ходить в etcd за топиками второй раз.
+func computeNodeLoadFrom(topics []TopicParams) (partitionCount map[int64]int, leaderCount map[int64]int) {
 	partitionCount = make(map[int64]int)
 	leaderCount = make(map[int64]int)
 	for _, t := range topics {
@@ -230,7 +331,7 @@ func (n *NodeCoordinator) computeNodeLoad(ctx context.Context) (partitionCount m
 			leaderCount[p.LeaderNodeId]++
 		}
 	}
-	return partitionCount, leaderCount, nil
+	return partitionCount, leaderCount
 }
 
 // pickReplicaCandidate выбирает ноду для назначения на партицию (topicName,

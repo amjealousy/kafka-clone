@@ -24,7 +24,7 @@ type TCPServer struct {
 	reqbodyPool sync.Pool
 	logger      *slog.Logger
 	Kbroker     *Broker
-	MainHandler func(*TCPContext, []byte)
+	MainHandler func(CommandContext, []byte) error
 }
 type PooledBuffer struct {
 	Body   []byte
@@ -81,7 +81,7 @@ func (t *TCPServer) ReadLoop(ctx context.Context, l net.Listener) error {
 			}()
 			t.logger.Info("[INFO] new tcp connection from ", "ip", accept.RemoteAddr())
 
-			t.handleConnection(accept)
+			t.handleConnection(ctx, accept)
 
 		}()
 	}
@@ -89,7 +89,7 @@ func (t *TCPServer) ReadLoop(ctx context.Context, l net.Listener) error {
 
 const MaxBodySize = 64 * 1024
 
-func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
+func (t *TCPServer) handleConnection(requestCtx context.Context, conn net.Conn) (handlelvlerr error) {
 	defer func() {
 		if handlelvlerr != nil && handlelvlerr.Error() != "" {
 			conn.Write([]byte("unexpected error while handling connection\n"))
@@ -143,8 +143,11 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 			flush := func() {
 				t.reqbodyPool.Put(buf)
 			}
-			tcpContext := NewTCPContext(conn, buf, header, flush)
-			t.MainHandler(tcpContext, bodyBuf)
+			tcpContext := NewTCPContextWithContext(requestCtx, conn, buf, header, flush)
+			defer tcpContext.Close()
+			if err := t.MainHandler(tcpContext, bodyBuf); err != nil {
+				t.logger.Error("command handler failed", "command", header.CommandType, "error", err)
+			}
 
 		}
 	}
@@ -153,14 +156,26 @@ func (t *TCPServer) handleConnection(conn net.Conn) (handlelvlerr error) {
 }
 
 type TCPContext struct {
+	ctx       context.Context
 	con       net.Conn
 	Header    encode.KafkaHeader
 	buf       *PooledBuffer
 	flushFunc func()
+	closeOnce sync.Once
 }
 
+var _ CommandContext = (*TCPContext)(nil)
+
 func NewTCPContext(con net.Conn, buf *PooledBuffer, header encode.KafkaHeader, flushF func()) *TCPContext {
+	return NewTCPContextWithContext(context.Background(), con, buf, header, flushF)
+}
+
+func NewTCPContextWithContext(ctx context.Context, con net.Conn, buf *PooledBuffer, header encode.KafkaHeader, flushF func()) *TCPContext {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	return &TCPContext{
+		ctx:       ctx,
 		con:       con,
 		buf:       buf,
 		Header:    header,
@@ -169,11 +184,13 @@ func NewTCPContext(con net.Conn, buf *PooledBuffer, header encode.KafkaHeader, f
 
 }
 func (ctx *TCPContext) Close() {
-	ctx.con.Close()
-	if cap(ctx.buf.Reply) > MaxBodySize || cap(ctx.buf.Body) > MaxBodySize {
-		return
-	}
-	ctx.flushFunc()
+	ctx.closeOnce.Do(func() {
+		_ = ctx.con.Close()
+		if cap(ctx.buf.Reply) > MaxBodySize+8 || cap(ctx.buf.Body) > MaxBodySize {
+			return
+		}
+		ctx.flushFunc()
+	})
 }
 
 func (ctx *TCPContext) Write(b []byte) error {
@@ -198,6 +215,25 @@ func (ctx *TCPContext) Write(b []byte) error {
 	}
 	return nil
 }
+
+func (ctx *TCPContext) CommandType() encode.Command {
+	return ctx.Header.CommandType
+}
+
+func (ctx *TCPContext) Context() context.Context {
+	return ctx.ctx
+}
+
+// Respond кодирует protobuf-сообщение и записывает его в TCP frame с тем же
+// correlation ID, который был получен в запросе.
+func (ctx *TCPContext) Respond(message proto.Message) error {
+	body, err := ctx.Encode(message)
+	if err != nil {
+		return err
+	}
+	return ctx.Write(body)
+}
+
 func (ctx *TCPContext) Encode(str proto.Message) ([]byte, error) {
 	options := proto.MarshalOptions{}
 	out, err := options.MarshalAppend(ctx.buf.Reply[:0], str)
